@@ -17,7 +17,7 @@ import { useNotification } from '../context/NotificationContext';
 // 🔐 SECURITY: ADMIN LIST
 const ADMIN_EMAILS = [
   "raushanritik30891@gmail.com", 
-  "ritikraushan@gmail.com", 
+  "zyro.esports.7@gmail.com", 
   "admin@zyro.com"
 ];
 
