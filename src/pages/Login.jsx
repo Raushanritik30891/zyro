@@ -37,8 +37,8 @@ import { signInWithPopup } from 'firebase/auth';
 // 👑 ADMIN LIST (Sab small letters mein likhna safe rehta hai)
 const ADMIN_EMAILS = [
   "raushanritik30891@gmail.com", 
-  "admin@zyro.com",
-  "ritikraushan@gmail.com" // Backup email bhi daal diya
+  "igod61516@gmail.com",
+  "hrthikraushan@gmail.com" // Backup email bhi daal diya
 ]; 
 
 const Login = () => {

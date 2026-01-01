@@ -2,9 +2,15 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // --- COMPONENTS ---
-import Navbar from './components/Navbar'; // User wala Navbar
-// import AdminNavbar from './components/AdminNavbar'; // Agar future me alag chahiye
+// Navbar ab har page ke andar manually call nahi hoga, Layout me fix kar diya
+import Navbar from './components/Navbar'; 
 import Footer from './components/Footer';
+// Import these at the top
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Help from './pages/Help';
+
+// Add these inside <Routes>
 
 // --- PAGES ---
 import Home from './pages/Home';
@@ -15,6 +21,7 @@ import Matches from './pages/Matches';
 import Leaderboard from './pages/Leaderboard';
 import Admin from './pages/Admin';
 import Contact from './pages/Contact';
+import About from './pages/About'; // ✅ New Page
 
 // --- SCROLL TO TOP UTILITY ---
 const ScrollToTop = () => {
@@ -29,9 +36,7 @@ const ScrollToTop = () => {
 const Layout = ({ children, hideFooter = false }) => {
   return (
     <div className="flex flex-col min-h-screen bg-[#050505]">
-      {/* Navbar is handled inside pages individually for customization, 
-          OR you can put it here if it's identical everywhere */}
-      {/* <Navbar />  <-- Agar har page pe same navbar chahiye toh yahan uncomment karo */}
+      <Navbar /> {/* ✅ Navbar Global kar diya taaki har page me alag se na lagana pade */}
       
       <main className="flex-grow">
         {children}
@@ -50,24 +55,29 @@ const App = () => {
         
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/login" element={<Login />} /> {/* No Layout for Login */}
+        <Route path="/login" element={<Login />} /> {/* Login me Layout nahi chahiye */}
+        <Route path="/about" element={<Layout><About /></Layout>} /> {/* ✅ Added */}
         
         {/* USER ROUTES */}
         <Route path="/matches" element={<Layout><Matches /></Layout>} />
         <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
         <Route path="/subscription" element={<Layout><Subscription /></Layout>} />
         <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
+        <Route path="/terms" element={<Layout><Terms /></Layout>} />
+        <Route path="/help" element={<Layout><Help /></Layout>} />
+
         
         {/* PROTECTED ROUTES */}
         <Route path="/profile" element={<Layout><Profile /></Layout>} />
         
-        {/* ADMIN ROUTE (No Footer, Full Screen Control) */}
+        {/* ADMIN ROUTE (No Footer, Full Screen) */}
         <Route path="/admin" element={<Admin />} />
 
         {/* 404 - LOST IN VOID */}
         <Route path="*" element={
           <div className="min-h-screen bg-black flex flex-col items-center justify-center text-center p-4">
-            <h1 className="text-[150px] font-gaming font-black text-rosePink leading-none opacity-50">404</h1>
+            <h1 className="text-[120px] md:text-[150px] font-gaming font-black text-rosePink leading-none opacity-50">404</h1>
             <p className="text-gray-500 font-gaming uppercase tracking-[0.5em] mb-8">Timeline Not Found</p>
             <a href="/" className="px-8 py-3 border border-white/20 hover:bg-white/10 rounded-xl text-white font-bold uppercase transition-all">
               Return to Base
