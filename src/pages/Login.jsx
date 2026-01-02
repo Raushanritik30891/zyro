@@ -1,38 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Chrome, ShieldCheck } from 'lucide-react';
+import { Mail, Chrome, ShieldCheck, Home, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // --- FIREBASE IMPORTS ---
 import { auth, googleProvider } from '../firebase'; 
 import { signInWithPopup } from 'firebase/auth';
-// 1. Import Hook
-
-  const handleGoogleLogin = async () => {
-    try {
-      setError(""); 
-
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      // 1. Email ko lowercase aur trim karo (Space/Caps hatao)
-      const userEmail = user.email ? user.email.toLowerCase().trim() : "";
-
-      console.log("🔓 Checking Access Level for:", userEmail);
-
-      // 2. Check if Email is in Admin List
-      if (ADMIN_EMAILS.includes(userEmail)) {
-        addNotification('info', `Welcome Commander ${user.displayName}. HQ Access Granted.`); // 🔥 Trigger
-        navigate('/admin', { replace: true }); 
-      } else {
-        addNotification('success', `Identity Verified. Welcome back, ${user.displayName}!`); // 🔥 Trigger
-        navigate('/profile', { replace: true });
-      }
-
-    } catch (err) {
-      addNotification('error', "Authentication Failed. Please retry."); // 🔥 Error Trigger
-    }
-  };
 
 // 👑 ADMIN LIST (Sab small letters mein likhna safe rehta hai)
 const ADMIN_EMAILS = [
@@ -44,12 +17,38 @@ const ADMIN_EMAILS = [
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState(""); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [showHomeButton, setShowHomeButton] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
   const navigate = useNavigate();
+
+  // Timeout handler - agar 10 seconds mein login na ho to home button show karo
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setShowHomeButton(true);
+    }, 10000); // 10 seconds
+
+    setTimeoutId(id);
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // Reset timeout jab login successful ho
+  const resetTimeout = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setShowHomeButton(false);
+    }
+  };
 
   // --- 🚀 GOOGLE LOGIN WITH ROBUST ADMIN CHECK ---
   const handleGoogleLogin = async () => {
     try {
       setError(""); 
+      setIsLoading(true);
+      resetTimeout();
       
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
@@ -62,18 +61,54 @@ const Login = () => {
       // 2. Check if Email is in Admin List
       if (ADMIN_EMAILS.includes(userEmail)) {
         console.log("👑 ADMIN ACCESS GRANTED - Warping to HQ...");
-        // Replace true use kiya taaki back button dabane pe wapas login pe na aaye
-        navigate('/admin', { replace: true }); 
+        // Small delay for better UX
+        setTimeout(() => {
+          navigate('/admin', { replace: true });
+        }, 500);
       } else {
         console.log("👤 PLAYER ACCESS GRANTED - Entering Lobby...");
-        navigate('/profile', { replace: true });
+        setTimeout(() => {
+          navigate('/profile', { replace: true });
+        }, 500);
       }
       
     } catch (err) {
       console.error("Auth Error:", err);
-      setError("Access Denied. Neural Link Failed."); 
+      
+      // Specific error messages
+      if (err.code === 'auth/popup-closed-by-user') {
+        setError("Login cancelled. Please try again.");
+      } else if (err.code === 'auth/popup-blocked') {
+        setError("Popup blocked! Please allow popups for this site.");
+      } else if (err.code === 'auth/network-request-failed') {
+        setError("Network error. Check your internet connection.");
+      } else {
+        setError("Access Denied. Neural Link Failed.");
+      }
+      
+      setIsLoading(false);
+      setShowHomeButton(true); // Show home button on error
     }
   };
+
+  // Handle manual home navigation
+  const handleGoHome = () => {
+    navigate('/', { replace: true });
+  };
+
+  // Handle browser back button
+  useEffect(() => {
+    const handleBackButton = (e) => {
+      e.preventDefault();
+      navigate('/', { replace: true });
+    };
+
+    window.addEventListener('popstate', handleBackButton);
+    
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-body flex items-center justify-center p-4 relative overflow-hidden">
@@ -117,17 +152,61 @@ const Login = () => {
             {/* 🔥 MAIN ACTION BUTTON */}
             <button 
                 onClick={handleGoogleLogin}
-                className="w-full py-4 bg-white text-black font-gaming font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 hover:bg-rosePink hover:text-white transition-all duration-300 mb-6 shadow-[0_0_20px_rgba(255,255,255,0.2)] group"
+                disabled={isLoading}
+                className={`w-full py-4 ${isLoading ? 'bg-gray-700' : 'bg-white'} text-black font-gaming font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 ${!isLoading && 'hover:bg-rosePink hover:text-white'} transition-all duration-300 mb-6 shadow-[0_0_20px_rgba(255,255,255,0.2)] group`}
             >
-                <Chrome size={22} className="group-hover:rotate-[360deg] transition-transform duration-700" /> 
-                <span>{isLogin ? "Continue with Google" : "Start Journey"}</span>
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                    <span>Connecting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Chrome size={22} className="group-hover:rotate-[360deg] transition-transform duration-700" /> 
+                    <span>{isLogin ? "Continue with Google" : "Start Journey"}</span>
+                  </>
+                )}
             </button>
 
             {/* Error Feedback */}
             {error && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-center mb-6">
-                    <p className="text-red-500 text-[10px] font-bold uppercase tracking-wider">{error}</p>
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-center mb-6"
+                >
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <AlertCircle size={14} className="text-red-500" />
+                      <p className="text-red-500 text-[10px] font-bold uppercase tracking-wider">{error}</p>
+                    </div>
+                    
+                    {/* Troubleshooting Tips */}
+                    {error.includes('Popup blocked') && (
+                      <p className="text-[9px] text-gray-400 mt-1">
+                        Allow popups from this site in browser settings
+                      </p>
+                    )}
                 </motion.div>
+            )}
+
+            {/* Return to Home Button (Conditional) */}
+            {(showHomeButton || error) && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6"
+              >
+                <button 
+                  onClick={handleGoHome}
+                  className="w-full py-3 bg-gray-900/50 border border-gray-700 text-gray-300 font-gaming text-xs uppercase tracking-widest rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 hover:text-white transition-all duration-300 group"
+                >
+                  <Home size={18} className="text-gray-500 group-hover:text-rosePink" /> 
+                  <span>Return to Home</span>
+                </button>
+                <p className="text-[9px] text-gray-500 text-center mt-2">
+                  Stuck? Go back to homepage
+                </p>
+              </motion.div>
             )}
 
             {/* Disabled Manual Input (Aesthetic) */}
@@ -158,6 +237,20 @@ const Login = () => {
             <p className="text-[9px] font-gaming text-gray-500 uppercase flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-rosePink rounded-full animate-pulse"></span> Secured
             </p>
+            <p className="text-[9px] font-gaming text-gray-500 uppercase flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> v2.0
+            </p>
+        </div>
+
+        {/* Emergency Exit - Bottom Right Corner */}
+        <div className="fixed bottom-4 right-4">
+          <button 
+            onClick={handleGoHome}
+            className="p-2 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-rosePink transition-all duration-300 group"
+            title="Emergency Exit"
+          >
+            <Home size={16} className="group-hover:scale-110 transition-transform" />
+          </button>
         </div>
 
       </div>

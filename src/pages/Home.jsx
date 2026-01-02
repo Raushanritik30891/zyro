@@ -322,8 +322,8 @@ const Home = () => {
             {/* CARD 1: Scout */}
             <div className="min-w-[85vw] md:min-w-0 snap-center bg-gray-900/50 p-6 md:p-8 rounded-2xl md:rounded-3xl border border-gray-800 flex flex-col">
               <Shield size={32} md:size={40} className="text-gray-500 mb-4 md:mb-6"/>
-              <h3 className="text-xl md:text-2xl font-bold text-gray-300">SCOUT PASS</h3>
-              <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4 md:mb-6">₹50 <span className="text-sm text-gray-500">/match</span></div>
+              <h3 className="text-xl md:text-2xl font-bold text-gray-300">WARRIOR PASS</h3>
+              <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4 md:mb-6">₹49 <span className="text-sm text-gray-500">/match</span></div>
               <ul className="text-sm text-gray-400 space-y-3 mb-6 md:mb-8 flex-1">
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-green-500" /> Standard Support</li>
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-green-500" /> Manual Booking</li>
@@ -374,33 +374,7 @@ const Home = () => {
           <p className="text-center text-xs text-gray-600 mt-2 md:hidden animate-pulse">Swipe to explore →</p>
         </div>
 
-        {/* --- 4. DATA TICKER --- */}
-        <div className="bg-black/50 border-y border-gray-800 py-3 md:py-4 overflow-hidden">
-          <div className="flex whitespace-nowrap animate-marquee">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex items-center px-4 md:px-8">
-                <div className="flex items-center mx-2 md:mx-4">
-                  <TrendingUp size={12} className="text-pink-500 mr-2" />
-                  <span className="text-xs text-gray-500 uppercase">50K+ Matches</span>
-                </div>
-                <div className="flex items-center mx-2 md:mx-4">
-                  <Users size={12} className="text-pink-500 mr-2" />
-                  <span className="text-xs text-gray-500 uppercase">10K+ Warriors</span>
-                </div>
-                <div className="flex items-center mx-2 md:mx-4">
-                  <Star size={12} className="text-pink-500 mr-2" />
-                  <span className="text-xs text-gray-500 uppercase">AI Rankings</span>
-                </div>
-                <div className="flex items-center mx-2 md:mx-4">
-                  <Shield size={12} className="text-pink-500 mr-2" />
-                  <span className="text-xs text-gray-500 uppercase">Instant Payouts</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-
       {/* ✅ AI CHATBOT COMPONENT (Floating) */}
       <AIChatbot />
 

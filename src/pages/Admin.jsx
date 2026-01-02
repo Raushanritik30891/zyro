@@ -23,7 +23,7 @@ import { useNotification } from '../context/NotificationContext';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 👑 STRICT ADMIN ACCESS LIST
-const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "ritikraushan@gmail.com", "admin@zyro.com"];
+const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "igod61516@gmail.com", "admin@zyro.com"];
 
 const Admin = () => {
   const { addNotification } = useNotification();
@@ -105,7 +105,7 @@ const Admin = () => {
         mSnap, sSnap, msgSnap, hSnap, uSnap, allUSnap
       ] = await Promise.all([
         getDocs(query(collection(db, "matches"), orderBy("timestamp", "desc"))),
-        getDocs(query(collection(db, "subscriptions"), where("status", "==", "Pending"))),
+        getDocs(query(collection(db, "subscriptions"), where("status", "==", "pending"))),
         getDocs(query(collection(db, "contact_messages"), orderBy("timestamp", "desc"))),
         getDocs(query(collection(db, "match_history"), orderBy("timestamp", "desc"))),
         getDocs(query(collection(db, "users"), where("isPremium", "==", true))),
@@ -184,120 +184,177 @@ const Admin = () => {
     }
   }, [activeSection, lbFilter]);
 
-  // ==========================================
-  // 2. 🤖 AI VISION SCAN (GEMINI API) - ENHANCED
+ // ==========================================
+  // 2. 🤖 AI VISION SCAN (GEMINI 2.0) - FINAL INTEGRATED VERSION
   // ==========================================
   const handleAIScan = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // ⚠️ API KEY CHECK - Add your Gemini API Key here
-    const API_KEY = "AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxx"; // ⚠️ REPLACE WITH YOUR KEY
-    if(!API_KEY || API_KEY.includes("AIzaSy") === false) {
-      return addNotification('error', "🔑 Gemini API Key Missing! Add your key in Admin.js");
-    }
-
+    // ⚠️ Iskey ko secure rakhna
+    const API_KEY = "AIzaSyAhvL7Fg9AZ9JLQBhKbmqzLSLrCAdbgDu4";
+    const MODEL_NAME = "gemini-2.0-flash";
+    
     setScanning(true);
-    setScanStatus("🔍 Analyzing Image...");
-
-    const matchId = `MATCH-${Date.now()}`;
+    setScanStatus("🔄 Processing Image...");
 
     try {
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+      });
+
+      setScanStatus("🤖 Analyzing Leaderboard...");
       
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const base64 = reader.result.split(',')[1];
+      // ✅ PROMPT: Specifically asks for Wins, Kills, Match Points, and TOTAL
+      const prompt = `
+        Analyze this Free Fire leaderboard screenshot.
         
-        setScanStatus("📝 Extracting Data...");
-        const result = await model.generateContent([
-          `You are a Free Fire tournament score analyzer. Extract top 10 teams from leaderboard screenshot.
-          Return valid JSON array: [{"name": "Team Name", "kills": number, "points": number}]
-          Rules:
-          1. Only top 10 teams
-          2. Points = kills × 10 + placement points
-          3. Validate each entry
-          4. Clean team names`,
-          { inlineData: { data: base64, mimeType: file.type } }
-        ]);
-
-        const text = result.response.text();
-        const jsonStart = text.indexOf('[');
-        const jsonEnd = text.lastIndexOf(']') + 1;
+        The columns are: RANK | TEAM | WIN | POINT (Match Pts) | KILLS | TOTAL (Final Pts)
         
-        if (jsonStart === -1 || jsonEnd === 0) {
-          throw new Error("No valid JSON found in response");
+        Extract  all teams into a valid JSON array.
+        
+        JSON Structure per team:
+        {
+          "name": "Team Name",
+          "kills": 0,          // From KILLS column
+          "wins": 0,           // From WIN column
+          "matchPoints": 0,    // From POINT column
+          "totalPoints": 0     // From TOTAL column
         }
-        
-        const jsonStr = text.substring(jsonStart, jsonEnd);
-        let extracted = JSON.parse(jsonStr);
-        
-        // Ensure only top 10
-        extracted = extracted.slice(0, 10);
-        
-        if (!Array.isArray(extracted) || extracted.length === 0) {
-          throw new Error("No teams extracted");
+
+        RULES:
+        1. Extract exactly all teams 
+        2. Clean up team names.
+        3. Ensure all numbers are integers.
+        4. Return ONLY JSON.
+      `;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: prompt },
+                { inlineData: { mimeType: file.type, data: base64 } }
+              ]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              temperature: 0.1
+            }
+          })
         }
-        
-        setScanStatus(`🚀 Uploading ${extracted.length} Teams...`);
-        const batch = writeBatch(db);
+      );
 
-        // Clear existing teams for this lobby/type
-        const clearQ = query(
-          collection(db, "leaderboard"), 
-          where("lobby", "==", lbFilter.lobby), 
-          where("type", "==", lbFilter.type)
-        );
-        const existingSnap = await getDocs(clearQ);
-        existingSnap.docs.forEach(doc => {
-          batch.delete(doc.ref);
-        });
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
-        // Add new teams
-        extracted.forEach((t, index) => {
-          const docRef = doc(collection(db, "leaderboard"));
-          batch.set(docRef, { 
-            name: t.name?.trim() || `Team ${index + 1}`,
-            kills: Number(t.kills) || 0,
-            points: Number(t.points) || (Number(t.kills) * 10 + (10 - index)),
-            lobby: lbFilter.lobby, 
-            type: lbFilter.type, 
-            matchId: matchId, 
-            updatedAt: serverTimestamp(),
-            rank: index + 1,
-            timestamp: serverTimestamp(),
-            source: 'AI_SCAN'
-          });
-        });
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      console.log("AI Raw Response:", text);
+      setScanStatus("📊 Parsing Data...");
 
-        // Add to match history
-        const historyRef = doc(db, "match_history", matchId);
-        batch.set(historyRef, {
-          matchId,
-          lobby: lbFilter.lobby,
-          type: lbFilter.type,
-          teamCount: extracted.length,
-          timestamp: serverTimestamp(),
-          source: 'AI_SCAN',
-          admin: auth.currentUser?.email || 'Unknown'
-        });
+      // Clean and Parse JSON
+      let jsonStr = text.replace(/```json|```/g, '').trim();
+      const extracted = JSON.parse(jsonStr);
+      
+      // ✅ DATA MAPPING: Yahan sab kuch set ho raha hai database ke liye
+      const validTeams = extracted.slice(0, 10).map((team, index) => ({
+        name: String(team.name || `Team ${index + 1}`).trim().substring(0, 50),
+        kills: parseInt(team.kills) || 0,
+        wins: parseInt(team.wins) || 0,
+        matchPoints: parseInt(team.matchPoints) || 0,
+        // Database 'points' field mein 'TOTAL' value jayegi
+        points: parseInt(team.totalPoints) || (parseInt(team.kills) + parseInt(team.matchPoints)) || 0, 
+        rank: index + 1
+      }));
 
-        await batch.commit();
-        setScanStatus("✅ Done!"); 
-        addNotification('success', `🏆 Leaderboard Updated! ${extracted.length} teams added to Lobby ${lbFilter.lobby} (${lbFilter.type}).`);
-        syncLeaderboard();
-        fetchHistory();
-      };
-    } catch (err) { 
-      console.error("AI Scan Error:", err); 
-      addNotification('error', `❌ AI Scan Failed: ${err.message}. Try Manual Add.`);
+      if (validTeams.length === 0) throw new Error("No valid teams extracted");
+
+      setScanStatus(`🚀 Saving ${validTeams.length} Teams...`);
+      
+      // Saving function call
+      await saveTeamsToDatabase(validTeams, 'GEMINI_2.0');
+      
+      setScanStatus("✅ Success!");
+      addNotification('success', `🏆 ${validTeams.length} teams added to Lobby ${lbFilter.lobby}!`);
+      
+    } catch (error) {
+      console.error("AI Scan Error:", error);
+      addNotification('error', `❌ AI Scan Failed: ${error.message}`);
+      setManualModal(true);
+      
+    } finally {
+      setScanning(false);
+      setScanStatus("");
+      if (e.target) e.target.value = '';
     }
-    setScanning(false);
-    setScanStatus("");
   };
 
+  // ==========================================
+  // 3. DATABASE SAVE FUNCTION (Aapka original logic preserved)
+  // ==========================================
+  const saveTeamsToDatabase = async (teams, source = 'GEMINI_2.0') => {
+    const matchId = `${source}-${Date.now()}`;
+    const batch = writeBatch(db);
+
+    // 1. Purana data delete karo (Sirf current Lobby aur Type ka)
+    const clearQ = query(
+      collection(db, "leaderboard"), 
+      where("lobby", "==", lbFilter.lobby), 
+      where("type", "==", lbFilter.type)
+    );
+    
+    const existingSnap = await getDocs(clearQ);
+    existingSnap.docs.forEach(doc => batch.delete(doc.ref));
+
+    // 2. Naya data add karo (With Wins, MatchPoints, etc.)
+    teams.forEach((team, index) => {
+      const docRef = doc(collection(db, "leaderboard"));
+      batch.set(docRef, {
+        name: team.name,
+        kills: team.kills,
+        points: team.points,          // Total Points
+        wins: team.wins || 0,         // Wins count
+        matchPoints: team.matchPoints || 0, // Placement Points
+        rank: team.rank || index + 1,
+        lobby: lbFilter.lobby,
+        type: lbFilter.type,
+        matchId: matchId,
+        timestamp: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        source: source,
+        addedBy: auth.currentUser?.email,
+        status: 'ACTIVE'
+      });
+    });
+
+    // 3. Match History Update
+    const historyRef = doc(db, "match_history", matchId);
+    batch.set(historyRef, {
+      matchId,
+      lobby: lbFilter.lobby,
+      type: lbFilter.type,
+      teamCount: teams.length,
+      timestamp: serverTimestamp(),
+      source: source,
+      admin: auth.currentUser?.email,
+      status: 'COMPLETED',
+      modelUsed: 'gemini-2.0-flash'
+    });
+
+    await batch.commit();
+    
+    // 4. UI Refresh
+    syncLeaderboard();
+    fetchHistory();
+  };
   // ==========================================
   // 3. MANUAL ENTRY SYSTEM - ENHANCED
   // ==========================================
@@ -1137,6 +1194,106 @@ const Admin = () => {
     )}
   </motion.div>
 )}
+{activeSection === 'payments' && (
+  <motion.div key="payments" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <div className="bg-gradient-to-br from-gray-900/90 to-black/90 p-8 rounded-3xl border border-yellow-500/30 shadow-2xl backdrop-blur-sm">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-500 to-amber-500 bg-clip-text text-transparent">
+            FINANCIAL CENTER
+          </h2>
+          <p className="text-gray-400 mt-2">Manage subscription requests & payments</p>
+        </div>
+        <span className="px-4 py-2 bg-yellow-500/20 text-yellow-500 rounded-xl font-bold border border-yellow-500/30">
+          {pendingSubs.length} Pending Requests
+        </span>
+      </div>
+
+      {pendingSubs.length === 0 ? (
+        <div className="text-center py-20 bg-black/40 rounded-2xl border border-gray-800">
+          <DollarSign className="mx-auto mb-6 text-gray-700" size={80}/>
+          <h3 className="text-2xl font-bold text-gray-600 mb-3">No Pending Payments</h3>
+          <p className="text-gray-500">All transactions are up to date.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6">
+          {pendingSubs.map(sub => (
+            <div key={sub.id} className="bg-black/60 p-6 rounded-2xl border border-gray-800 hover:border-yellow-500/50 transition-all flex flex-col md:flex-row gap-6">
+              
+              {/* Screenshot Preview */}
+              <div className="w-full md:w-48 h-48 shrink-0 bg-gray-800 rounded-xl overflow-hidden border border-gray-700 relative group">
+                <img 
+                  src={sub.screenshotUrl} 
+                  alt="Payment Proof" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                  <a href={sub.screenshotUrl} target="_blank" rel="noreferrer" className="px-4 py-2 bg-white text-black rounded-lg font-bold text-xs flex items-center gap-2">
+                    <Eye size={14}/> View Full
+                  </a>
+                </div>
+              </div>
+
+              {/* Details */}
+              <div className="flex-1">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{sub.planName}</h3>
+                    <p className="text-yellow-500 font-bold text-lg">₹{sub.amount}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-xs font-bold uppercase">
+                      {sub.status}
+                    </span>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {sub.submittedAt?.toDate().toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm text-gray-400 mb-6 bg-gray-900/50 p-4 rounded-xl border border-gray-800">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-gray-600">User Name</p>
+                    <p className="text-white font-medium">{sub.userName}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-gray-600">WhatsApp</p>
+                    <p className="text-white font-medium">{sub.userWhatsapp}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-gray-600">Transaction ID</p>
+                    <p className="text-white font-medium font-mono">{sub.transactionId}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-gray-600">User Email</p>
+                    <p className="text-white font-medium">{sub.userEmail}</p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => handleAuthorizePayment(sub)}
+                    className="flex-1 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-green-500/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle size={18}/> Approve & Add Points
+                  </button>
+                  <button 
+                    onClick={() => handleDeclinePayment(sub)}
+                    className="flex-1 py-3 bg-gray-800 hover:bg-red-900/30 border border-transparent hover:border-red-500/50 text-gray-400 hover:text-red-400 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2"
+                  >
+                    <X size={18}/> Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </motion.div>
+)}
+
 {activeSection === 'support' && (
   <motion.div key="support" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
     <div className="bg-gradient-to-br from-gray-900/90 to-black/90 p-8 rounded-3xl border border-pink-500/30 shadow-2xl backdrop-blur-sm">

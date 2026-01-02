@@ -74,9 +74,9 @@ const Navbar = () => {
             {/* Logo Container - REMOVED RECTANGLE, JUST LOGO */}
             <div className="relative">
               {/* Glow Effect - Made larger */}
-              <div className="absolute -inset-3 bg-rosePink/20 blur-lg rounded-full opacity-70"></div>
+               <div className="absolute -inset-3 bg-rosePink/20 blur-lg rounded-full opacity-70"></div>
               {/* Logo Image - Made larger, no background rectangle */}
-              <div className="relative w-12 h-12 md:w-14 md:h-14">
+              <div className="relative w-20 h-12 md:w-20 md:h-20">
                 <img 
                   src={logoImg} 
                   alt="Zyro Logo" 
@@ -139,7 +139,7 @@ const Navbar = () => {
               <div className="md:hidden relative">
                 <div className="absolute inset-0 bg-yellow-500 blur rounded-full animate-pulse"></div>
                 <div className="relative p-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-black rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.5)]">
-                  <Crown size={18} fill="black"/>
+                  <Crown size={14} fill="black"/>
                 </div>
               </div>
             </Link>
@@ -234,7 +234,7 @@ const Navbar = () => {
                           className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-all text-sm font-medium text-gray-300"
                         >
                           <Gamepad2 size={16} className="text-green-400"/> 
-                          MY MATCHES
+                          MATCHES
                         </Link>
                         
                         {/* Admin Access - Only for Admins */}

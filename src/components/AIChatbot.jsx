@@ -377,7 +377,7 @@ const AIChatbot = () => {
    • డైరెక్ట్ గ్రాండ్ ఫైనల్ ఎంట్రీ
    • ఉచిత జైరో బ్రాండెడ్ టోపీ 🧢
    • ధృవీకరించిన గోల్డ్ బ్యాడ్జ్ 👑
-   • VIP సపోర్ట్ 24/7
+   • VIP సపోर్ట్ 24/7
    • 10% మ్యాచ్ డిస్కౌంట్
    • ఎర్లీ టూర్నమెంట్ యాక్సెస్
    • గాడ్ మోడ్ లీడర్‌బోర్డ్
@@ -403,7 +403,7 @@ const AIChatbot = () => {
    • "చెల్లింపు పద్ధతులు"
    • "సపోర్ట్ కాంటాక్ట్"
 
-🛡️ **దబదబా ఏర్పరచడానికి సిద్ధమా?** 🚀`;
+🛡️ **దబదబా ఏర్పరచడానికి सिद్ధమా?** 🚀`;
   };
 
   const handleSuggestionClick = (text) => {
@@ -411,7 +411,7 @@ const AIChatbot = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] font-sans">
+    <div className="font-sans">
       
       {/* --- CHAT WINDOW --- */}
       <AnimatePresence>
@@ -421,10 +421,10 @@ const AIChatbot = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="mb-4 w-[380px] bg-gradient-to-b from-gray-900 to-black border-2 border-pink-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[550px]"
+            className="fixed bottom-20 right-6 z-[9998] w-[380px] bg-gradient-to-b from-gray-900 to-black border-2 border-pink-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[550px]"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 p-4 flex justify-between items-center">
+            <div className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 p-4 flex justify-between items-center shrink-0">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
                   <Bot size={22} className="text-white"/>
@@ -526,7 +526,7 @@ const AIChatbot = () => {
                         {msg.role === 'bot' ? 'ZYRO AI' : language === 'en' ? 'You' : language === 'hi' ? 'आप' : 'మీరు'}
                       </span>
                     </div>
-                    <div className="text-sm whitespace-pre-line">{msg.text}</div>
+                    <div className="text-sm whitespace-pre-line break-words">{msg.text}</div>
                   </div>
                 </motion.div>
               ))}
@@ -545,28 +545,30 @@ const AIChatbot = () => {
             </div>
 
             {/* Quick Suggestions */}
-            <div className="px-4 pt-2 pb-3 border-t border-gray-800">
+            <div className="px-4 py-3 border-t border-gray-800 bg-gray-900/30 shrink-0">
               <p className="text-xs text-gray-400 mb-2 flex items-center gap-2">
                 <Sparkles size={12} /> 
                 {language === 'en' ? 'Quick Questions:' : language === 'hi' ? 'त्वरित प्रश्न:' : 'త్వరిత ప్రశ్నలు:'}
               </p>
-              <div className="flex flex-wrap gap-2">
-                {suggestions.map((suggestion, index) => (
-                  <motion.button
-                    key={index}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleSuggestionClick(suggestion.text)}
-                    className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-xs text-gray-300 flex items-center gap-2 transition-colors"
-                  >
-                    {suggestion.icon}
-                    {suggestion.text}
-                  </motion.button>
-                ))}
+              <div className="overflow-x-auto pb-2">
+                <div className="flex gap-2 min-w-max">
+                  {suggestions.map((suggestion, index) => (
+                    <motion.button
+                      key={index}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleSuggestionClick(suggestion.text)}
+                      className="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-xs text-gray-300 flex items-center gap-2 transition-colors whitespace-nowrap"
+                    >
+                      {suggestion.icon}
+                      {suggestion.text}
+                    </motion.button>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-gray-900/50 border-t border-gray-800 flex gap-3">
+            <div className="p-4 bg-gray-900/50 border-t border-gray-800 flex gap-3 shrink-0">
               <div className="flex-1 relative">
                 <input 
                   ref={inputRef}
@@ -608,18 +610,18 @@ const AIChatbot = () => {
         )}
       </AnimatePresence>
 
-      {/* --- FLOATING TRIGGER BUTTON --- */}
+      {/* --- FLOATING TRIGGER BUTTON - POSITION FIXED --- */}
       <motion.button
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative group"
+        className="fixed bottom-20 right-6 z-[9999] group" // Changed from bottom-6 to bottom-8
       >
         {/* Glowing Background */}
         <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur-xl opacity-70 animate-pulse"></div>
         
         {/* Main Button */}
-        <div className="relative w-16 h-16 bg-gradient-to-br from-pink-600 via-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-2xl border-2 border-white/20 backdrop-blur-sm">
+        <div className="relative w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-pink-600 via-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-2xl border-2 border-white/20 backdrop-blur-sm">
           <AnimatePresence mode="wait">
             <motion.div
               key={isOpen ? 'close' : 'open'}
@@ -629,24 +631,24 @@ const AIChatbot = () => {
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
             >
               {isOpen ? (
-                <X size={28} className="text-white"/>
+                <X size={24} className="text-white sm:size-28"/>
               ) : (
-                <MessageSquare size={28} className="text-white"/>
+                <MessageSquare size={24} className="text-white sm:size-28"/>
               )}
             </motion.div>
           </AnimatePresence>
           
           {/* Notification Badge */}
           {!isOpen && messages.length === 1 && (
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-              <span className="text-xs font-bold">AI</span>
+            <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-red-500 rounded-full flex items-center justify-center">
+              <span className="text-[10px] sm:text-xs font-bold">AI</span>
             </div>
           )}
         </div>
         
         {/* Tooltip */}
         {!isOpen && (
-          <div className="absolute right-20 bottom-1/2 transform translate-y-1/2 bg-gray-900 border border-gray-700 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl">
+          <div className="absolute right-16 sm:right-20 bottom-1/2 transform translate-y-1/2 bg-gray-900 border border-gray-700 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl hidden sm:block">
             <div className="flex items-center gap-2">
               <Zap size={12} className="text-yellow-400" />
               ZYRO AI Assistant
