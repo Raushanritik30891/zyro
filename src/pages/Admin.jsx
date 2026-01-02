@@ -23,7 +23,7 @@ import { useNotification } from '../context/NotificationContext';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 👑 STRICT ADMIN ACCESS LIST
-const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "igod61516@gmail.com", "zyro.esports.7gmail.com"];
+const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "igod61516@gmail.com", "zyro.esports.7@gmail.com"];
 
 const Admin = () => {
   const { addNotification } = useNotification();
@@ -525,31 +525,44 @@ const Admin = () => {
   // ==========================================
   // 5. FINANCIAL & USER MANAGEMENT
   // ==========================================
-  const handleAuthorizePayment = async (sub) => {
-    if(!window.confirm(`Authorize ${sub.pointsAwarded} Points to ${sub.fullName}?`)) return;
-    setLoading(true);
-    try {
-      const userRef = doc(db, "users", sub.userId);
-      await updateDoc(userRef, {
-        isPremium: true,
-        premiumPlan: sub.plan,
-        points: increment(Number(sub.pointsAwarded) || 1000), 
-        expiryDate: sub.expiry,
-        lastActivation: serverTimestamp(),
-        premiumSince: serverTimestamp()
-      });
-      
-      await updateDoc(doc(db, "subscriptions", sub.id), { 
-        status: "Approved", 
-        approvedBy: auth.currentUser.email,
-        approvedAt: serverTimestamp()
-      });
-      
-      addNotification('success', "💎 Payment Authorized & Points Added!");
-      fetchAllData();
-    } catch (err) { addNotification('error', "❌ Transaction Failed"); }
-    setLoading(false);
-  };
+// Admin.js में handleAuthorizePayment function
+const handleAuthorizePayment = async (sub) => {
+  if(!window.confirm(`Add ${sub.pointsToAdd} Points to ${sub.userName}?`)) return;
+  
+  setLoading(true);
+  try {
+    const userRef = doc(db, "users", sub.userId);
+    
+    // Current points fetch करें
+    const userSnap = await getDoc(userRef);
+    const currentPoints = userSnap.data()?.points || 0;
+    const newPoints = currentPoints + Number(sub.pointsToAdd);
+    
+    // Points update करें
+    await updateDoc(userRef, {
+      points: newPoints,
+      lastPointsAdded: serverTimestamp(),
+      lastPurchaseId: sub.orderId
+    });
+    
+    // Subscription status update करें
+    await updateDoc(doc(db, "subscriptions", sub.id), { 
+      status: "approved", 
+      approvedBy: auth.currentUser.email,
+      approvedAt: serverTimestamp(),
+      pointsAdded: sub.pointsToAdd,
+      finalPoints: newPoints
+    });
+    
+    addNotification('success', `✅ ${sub.pointsToAdd} points added to ${sub.userName}!`);
+    fetchAllData();
+    
+  } catch (err) { 
+    console.error("Points addition error:", err);
+    addNotification('error', "❌ Failed to add points"); 
+  }
+  setLoading(false);
+};
 
   const handleDeclinePayment = async (sub) => {
     const reason = prompt("Reason for rejection:", "Invalid Payment Screenshot");

@@ -12,7 +12,7 @@ const ADMIN_EMAILS = [
   "raushanritik30891@gmail.com", 
   "igod61516@gmail.com",
   "hrthikraushan@gmail.com",
-  "zyro.esports.7gmail.com" // Backup email bhi daal diya
+  "zyro.esports.7@gmail.com" // Backup email bhi daal diya
 ]; 
 
 const Login = () => {

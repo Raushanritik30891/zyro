@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { 
   User, Shield, Trophy, Star, Zap, Edit3, Camera, Lock, 
   Award, Crown, Save, X, Loader, Sparkles, Hash, 
-  Users, Gift, Target, CheckCircle, Upload, RefreshCw
+  Users, Gift, Target, CheckCircle, Upload, RefreshCw,
+  CreditCard
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { db, auth } from '../firebase';
@@ -32,11 +33,17 @@ const Profile = () => {
     teamMembers: ["", "", "", ""]
   });
 
+  // ✅ NEW: Payment modal state
+  const [paymentModal, setPaymentModal] = useState({
+    show: false,
+    package: null
+  });
+
   // Points system
   const POINTS_PACKAGES = [
-    { id: 1, price: 49, points: 150, label: "Basic" },
-    { id: 2, price: 99, points: 250, label: "Pro" },
-    { id: 3, price: 199, points: 500, label: "Premium" }
+    { id: 1, price: 49, points: 10, label: "Basic" },
+    { id: 2, price: 99, points: 20, label: "Pro" },
+    { id: 3, price: 199, points: 50, label: "Premium" }
   ];
 
   // ✅ FIXED: Fetch user data properly
@@ -274,7 +281,7 @@ const Profile = () => {
     }
   };
 
-  // ✅ FIXED: Purchase points function
+  // ✅ FIXED: Purchase points function - NOW CREATES PENDING REQUEST ONLY
   const handlePurchasePoints = async (pkg) => {
     if (!auth.currentUser) {
       addNotification('error', 'Please login first');
@@ -285,26 +292,64 @@ const Profile = () => {
     setSaving(true);
     
     try {
-      const userRef = doc(db, "users", auth.currentUser.uid);
-      const currentPoints = userData?.points || 0;
-      const newPoints = currentPoints + pkg.points;
+      const user = auth.currentUser;
       
-      await updateDoc(userRef, {
-        points: newPoints,
-        lastPurchase: serverTimestamp()
+      // 1. Fetch current user data
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      const currentUserData = userSnap.exists() ? userSnap.data() : {};
+      
+      // 2. Check for existing pending requests
+      const subscriptionsRef = collection(db, "subscriptions");
+      // Note: We would need to query here, but for simplicity we'll create unique ID
+      
+      // 3. Create subscription request (Goes to admin for approval)
+      const orderId = `POINTS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      
+      await setDoc(doc(db, "subscriptions", orderId), {
+        // User details
+        userId: user.uid,
+        userEmail: user.email,
+        userName: currentUserData.displayName || user.displayName || "Unknown",
+        userWhatsapp: "", // User will fill in subscription page
+        
+        // Plan details
+        planName: `${pkg.label} Points Package`,
+        planId: `points_${pkg.id}`,
+        amount: pkg.price,
+        pointsToAdd: pkg.points, // Points to be added after approval
+        
+        // Payment details (to be filled by user)
+        transactionId: "", // User will fill
+        screenshotUrl: "", // User will upload
+        upiId: "zyroesports@upi",
+        
+        // Status and timestamps
+        status: "pending", // Admin will change to "approved"
+        submittedAt: serverTimestamp(),
+        orderId: orderId,
+        type: "points_purchase",
+        
+        // User's current points (for admin reference)
+        currentPoints: currentUserData.points || 0,
+        
+        // Admin fields (to be filled by admin)
+        approvedAt: null,
+        approvedBy: null,
+        adminNotes: ""
       });
       
-      // Update local state
-      setUserData(prev => ({ 
-        ...prev, 
-        points: newPoints 
-      }));
+      // Show payment instructions modal
+      setPaymentModal({
+        show: true,
+        package: pkg
+      });
       
-      addNotification('success', `Successfully purchased ${pkg.points} points!`);
+      addNotification('success', `Purchase request created! Please complete payment to get ${pkg.points} points.`);
       
     } catch (error) {
-      console.error("Purchase error:", error);
-      addNotification('error', 'Failed to process purchase');
+      console.error("Purchase request error:", error);
+      addNotification('error', 'Failed to create purchase request');
     } finally {
       setSaving(false);
     }
@@ -402,6 +447,65 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ NEW: Payment Instructions Modal Component
+  const PaymentInstructionsModal = () => {
+    if (!paymentModal.show) return null;
+    
+    const pkg = paymentModal.package;
+    
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-xl px-4">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }} 
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 p-8 rounded-3xl max-w-md w-full"
+        >
+          <div className="text-center mb-6">
+            <div className="inline-flex p-3 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-2xl mb-4">
+              <CreditCard size={32} />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">Complete Payment</h3>
+            <p className="text-4xl font-bold text-white mb-3">₹{pkg.price}</p>
+            <div className="text-sm text-yellow-500 font-bold mb-3">
+              Get {pkg.points} Points After Approval
+            </div>
+          </div>
+          
+          <div className="space-y-4 mb-6">
+            <div className="p-4 bg-black/50 rounded-xl border border-gray-800">
+              <p className="text-center font-bold mb-2">Payment Instructions:</p>
+              <ol className="text-sm text-gray-300 space-y-2">
+                <li>1. Send ₹{pkg.price} to UPI: <strong>zyroesports@upi</strong></li>
+                <li>2. Save the transaction screenshot</li>
+                <li>3. Go to Subscription page</li>
+                <li>4. Upload screenshot with transaction ID</li>
+                <li>5. Points added within 24 hours after verification</li>
+              </ol>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setPaymentModal({ show: false, package: null })}
+              className="flex-1 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={() => {
+                setPaymentModal({ show: false, package: null });
+                navigate('/subscription');
+              }}
+              className="flex-1 py-3 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-xl font-bold"
+            >
+              Go to Subscription Page
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
   };
 
   // Loading state
@@ -529,7 +633,7 @@ const Profile = () => {
                   />
                 </div>
                 
-                {/* Points Purchase Buttons */}
+                {/* ✅ FIXED: Points Purchase Buttons - Now creates pending request */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {POINTS_PACKAGES.map(pkg => (
                     <button
@@ -834,6 +938,9 @@ const Profile = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* ✅ Render Payment Instructions Modal */}
+      <PaymentInstructionsModal />
     </div>
   );
 };
