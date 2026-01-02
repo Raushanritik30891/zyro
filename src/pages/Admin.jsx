@@ -23,7 +23,7 @@ import { useNotification } from '../context/NotificationContext';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 👑 STRICT ADMIN ACCESS LIST
-const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "igod61516@gmail.com", "admin@zyro.com"];
+const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "igod61516@gmail.com", "zyro.esports.7gmail.com"];
 
 const Admin = () => {
   const { addNotification } = useNotification();

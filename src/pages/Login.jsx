@@ -11,7 +11,8 @@ import { signInWithPopup } from 'firebase/auth';
 const ADMIN_EMAILS = [
   "raushanritik30891@gmail.com", 
   "igod61516@gmail.com",
-  "hrthikraushan@gmail.com" // Backup email bhi daal diya
+  "hrthikraushan@gmail.com",
+  "zyro.esports.7gmail.com" // Backup email bhi daal diya
 ]; 
 
 const Login = () => {
