@@ -13,7 +13,7 @@ const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dwhttjvop/image/upload";
 const UPLOAD_PRESET = "zyro esports"; 
 
 // QR Code image URL - ADD YOUR QR CODE IMAGE URL HERE
-const QR_CODE_URL = "https://your-domain.com/path-to-qr-code.png"; // Replace with your actual QR code URL
+const QR_CODE_URL = "/qr.png"; // public folder के root में रखें qr.png
 
 const Subscription = () => {
   const { addNotification } = useNotification();
@@ -53,7 +53,7 @@ const Subscription = () => {
   const basePlans = [
     { 
       id: "warrior", 
-      name: "WARRIOR PASS", 
+      name: "GOLD PASS", 
       price: 49, 
       points: 10, // ₹49 → 10 points
       color: "#60a5fa", 
@@ -67,7 +67,7 @@ const Subscription = () => {
     },
     { 
       id: "elite", 
-      name: "ELITE PASS", 
+      name: "DIAMOND PASS", 
       price: 99, 
       points: 20, // ₹99 → 20 points
       color: "#f43f5e", 

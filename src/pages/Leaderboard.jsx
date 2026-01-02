@@ -99,7 +99,7 @@ const Leaderboard = () => {
     if (!file) return;
 
     // ⚠️ Replace with your actual key logic or env variable
-    const API_KEY = "AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxx"; 
+    const API_KEY = ""; 
     
     if(!API_KEY || !API_KEY.startsWith("AIzaSy")) {
       alert("🔑 API Key Missing or Invalid! Contact Admin.");
@@ -278,7 +278,7 @@ const Leaderboard = () => {
             className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase mb-2"
           >
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500">
-              Elite Standings
+              Overall Standings
             </span>
           </motion.h1>
           <p className="text-gray-400 text-sm md:text-base tracking-widest uppercase font-medium">

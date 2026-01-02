@@ -22,12 +22,12 @@ const AIChatbot = () => {
 
   // Quick suggestions
   const suggestions = [
-    { text: "Passes ki pricing batao", icon: <Crown size={14} />, keywords: ['price', 'pricing', 'cost', 'rate', 'कीमत', 'दाम', 'ప్రైస్', 'ధర'] },
-    { text: "God Mode ke benefits kya hai?", icon: <Zap size={14} />, keywords: ['god mode', 'god', 'premium', 'गॉड', 'గాడ్'] },
-    { text: "Tournament schedule batao", icon: <Clock size={14} />, keywords: ['tournament', 'match', 'schedule', 'time', 'टूर्नामेंट', 'टाइम', 'టూర్నమెంట్', 'సమయం'] },
-    { text: "Payment options kya hai?", icon: <CreditCard size={14} />, keywords: ['payment', 'pay', 'money', 'fund', 'भुगतान', 'पैसा', 'చెల్లింపు', 'డబ్బు'] },
-    { text: "Support kaise contact karein?", icon: <HelpCircle size={14} />, keywords: ['support', 'help', 'contact', 'सम्पर्क', 'सहायता', 'సపోర్ట్', 'సహాయం'] },
-    { text: "Loyalty points system", icon: <Star size={14} />, keywords: ['points', 'loyalty', 'reward', 'bonus', 'पॉइंट', 'इनाम', 'పాయింట్లు', 'రివార్డ్'] }
+    { text: "Passes ki pricing batao", icon: <Crown size={16} />, keywords: ['price', 'pricing', 'cost', 'rate', 'कीमत', 'दाम', 'ప్రైస్', 'ధర'] },
+    { text: "God Mode ke benefits kya hai?", icon: <Zap size={16} />, keywords: ['god mode', 'god', 'premium', 'गॉड', 'గాడ్'] },
+    { text: "Tournament schedule batao", icon: <Clock size={16} />, keywords: ['tournament', 'match', 'schedule', 'time', 'टूर्नामेंट', 'टाइम', 'టూర్నమెంట్', 'సమయం'] },
+    { text: "Payment options kya hai?", icon: <CreditCard size={16} />, keywords: ['payment', 'pay', 'money', 'fund', 'भुगतान', 'पैसा', 'చెల్లింపు', 'డబ్బు'] },
+    { text: "Support kaise contact karein?", icon: <HelpCircle size={16} />, keywords: ['support', 'help', 'contact', 'सम्पर्क', 'सहायता', 'సపోర్ట్', 'సహాయం'] },
+    { text: "Loyalty points system", icon: <Star size={16} />, keywords: ['points', 'loyalty', 'reward', 'bonus', 'पॉइंट', 'इनाम', 'పాయింట్లు', 'రివార్డ్'] }
   ];
 
   // Platform information database
@@ -377,7 +377,7 @@ const AIChatbot = () => {
    • డైరెక్ట్ గ్రాండ్ ఫైనల్ ఎంట్రీ
    • ఉచిత జైరో బ్రాండెడ్ టోపీ 🧢
    • ధృవీకరించిన గోల్డ్ బ్యాడ్జ్ 👑
-   • VIP సపోर్ట్ 24/7
+   • VIP సపోర్ట్ 24/7
    • 10% మ్యాచ్ డిస్కౌంట్
    • ఎర్లీ టూర్నమెంట్ యాక్సెస్
    • గాడ్ మోడ్ లీడర్‌బోర్డ్
@@ -403,7 +403,7 @@ const AIChatbot = () => {
    • "చెల్లింపు పద్ధతులు"
    • "సపోర్ట్ కాంటాక్ట్"
 
-🛡️ **దబదబా ఏర్పరచడానికి सिद్ధమా?** 🚀`;
+🛡️ **దబదబా ఏర్పరచడానికి सिद్ధमా?** 🚀`;
   };
 
   const handleSuggestionClick = (text) => {
@@ -413,7 +413,7 @@ const AIChatbot = () => {
   return (
     <div className="font-sans">
       
-      {/* --- CHAT WINDOW --- */}
+      {/* --- FULL SCREEN CHAT WINDOW --- */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -421,17 +421,17 @@ const AIChatbot = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-20 right-6 z-[9998] w-[380px] bg-gradient-to-b from-gray-900 to-black border-2 border-pink-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[550px]"
+            className="fixed inset-0 z-[9998] bg-gradient-to-b from-gray-900 to-black flex flex-col"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 p-4 flex justify-between items-center shrink-0">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Bot size={22} className="text-white"/>
+                <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                  <Bot size={24} className="text-white"/>
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg tracking-wide">ZYRO AI</h3>
-                  <div className="flex items-center gap-2 text-xs text-white/90">
+                  <h3 className="font-bold text-white text-xl tracking-wide">ZYRO AI</h3>
+                  <div className="flex items-center gap-2 text-sm text-white/90">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 
                     {language === 'en' ? 'Online' : language === 'hi' ? 'ऑनलाइन' : 'ఆన్‌లైన్'}
                   </div>
@@ -442,11 +442,11 @@ const AIChatbot = () => {
                 {/* Language Selector */}
                 <div className="relative group">
                   <button className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
-                    <Globe size={18} className="text-white"/>
+                    <Globe size={20} className="text-white"/>
                   </button>
                   <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block">
-                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-2 w-48 shadow-xl">
-                      <p className="text-xs text-gray-400 mb-2">
+                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 w-48 shadow-xl">
+                      <p className="text-sm text-gray-400 mb-2">
                         {language === 'en' ? 'Select Language:' : language === 'hi' ? 'भाषा चुनें:' : 'భాష ఎంచుకోండి:'}
                       </p>
                       <button
@@ -501,7 +501,7 @@ const AIChatbot = () => {
               </div>
             </div>
 
-            {/* Messages Area */}
+            {/* Messages Area - Full Screen */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-950 to-black">
               {messages.map((msg, index) => (
                 <motion.div 
@@ -518,15 +518,15 @@ const AIChatbot = () => {
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
                       {msg.role === 'bot' ? (
-                        <Bot size={14} className="text-green-400"/>
+                        <Bot size={16} className="text-green-400"/>
                       ) : (
-                        <User size={14} className="text-white"/>
+                        <User size={16} className="text-white"/>
                       )}
-                      <span className="text-xs font-bold">
+                      <span className="text-sm font-bold">
                         {msg.role === 'bot' ? 'ZYRO AI' : language === 'en' ? 'You' : language === 'hi' ? 'आप' : 'మీరు'}
                       </span>
                     </div>
-                    <div className="text-sm whitespace-pre-line break-words">{msg.text}</div>
+                    <div className="text-base whitespace-pre-line break-words leading-relaxed">{msg.text}</div>
                   </div>
                 </motion.div>
               ))}
@@ -534,8 +534,8 @@ const AIChatbot = () => {
               {loading && (
                 <div className="flex justify-start">
                   <div className="bg-gray-800/80 p-3 rounded-2xl rounded-bl-none flex items-center gap-2">
-                    <Loader size={16} className="text-pink-500 animate-spin"/>
-                    <span className="text-sm text-gray-300">
+                    <Loader size={18} className="text-pink-500 animate-spin"/>
+                    <span className="text-base text-gray-300">
                       {language === 'en' ? 'ZYRO AI is typing...' : language === 'hi' ? 'ZYRO AI टाइप कर रहा है...' : 'ZYRO AI టైప్ చేస్తోంది...'}
                     </span>
                   </div>
@@ -544,10 +544,10 @@ const AIChatbot = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Quick Suggestions */}
+            {/* Quick Suggestions - Full Screen */}
             <div className="px-4 py-3 border-t border-gray-800 bg-gray-900/30 shrink-0">
-              <p className="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                <Sparkles size={12} /> 
+              <p className="text-sm text-gray-400 mb-2 flex items-center gap-2">
+                <Sparkles size={16} /> 
                 {language === 'en' ? 'Quick Questions:' : language === 'hi' ? 'त्वरित प्रश्न:' : 'త్వరిత ప్రశ్నలు:'}
               </p>
               <div className="overflow-x-auto pb-2">
@@ -557,7 +557,7 @@ const AIChatbot = () => {
                       key={index}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleSuggestionClick(suggestion.text)}
-                      className="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-xs text-gray-300 flex items-center gap-2 transition-colors whitespace-nowrap"
+                      className="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full text-sm text-gray-300 flex items-center gap-2 transition-colors whitespace-nowrap"
                     >
                       {suggestion.icon}
                       {suggestion.text}
@@ -567,7 +567,7 @@ const AIChatbot = () => {
               </div>
             </div>
 
-            {/* Input Area */}
+            {/* Input Area - Fixed: "cut send" issue resolved */}
             <div className="p-4 bg-gray-900/50 border-t border-gray-800 flex gap-3 shrink-0">
               <div className="flex-1 relative">
                 <input 
@@ -583,26 +583,26 @@ const AIChatbot = () => {
                       ? "कीमतों, नियमों, टूर्नामेंट के बारे में पूछें..."
                       : "ధరలు, నియమాలు, టూర్నమెంట్ల గురించి అడగండి..."
                   }
-                  className="w-full bg-gray-800 border border-gray-700 rounded-full px-4 py-3 text-sm text-white focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500/20 pr-12"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-full px-4 py-3 text-base text-white focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500/20 pr-12"
                 />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-                  <Gamepad2 size={16} className="text-gray-500" />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <Gamepad2 size={18} className="text-gray-500" />
                 </div>
               </div>
               <motion.button 
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSend()}
                 disabled={loading || !input.trim()}
-                className={`p-3 rounded-full ${
+                className={`p-3 rounded-full flex-shrink-0 ${
                   loading || !input.trim()
                     ? 'bg-gray-700 cursor-not-allowed'
                     : 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700'
                 } transition-all duration-200`}
               >
                 {loading ? (
-                  <Loader size={18} className="text-white animate-spin"/>
+                  <Loader size={20} className="text-white animate-spin"/>
                 ) : (
-                  <Send size={18} className="text-white"/>
+                  <Send size={20} className="text-white"/>
                 )}
               </motion.button>
             </div>
@@ -610,51 +610,51 @@ const AIChatbot = () => {
         )}
       </AnimatePresence>
 
-      {/* --- FLOATING TRIGGER BUTTON - POSITION FIXED --- */}
+      {/* --- FLOATING TRIGGER BUTTON - SMALLER AND AT TOP --- */}
       <motion.button
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-20 right-6 z-[9999] group" // Changed from bottom-6 to bottom-8
+        className="fixed bottom-40 right-3 z-[9999] group"
       >
         {/* Glowing Background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full blur-lg opacity-70 animate-pulse"></div>
         
-        {/* Main Button */}
-        <div className="relative w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-pink-600 via-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-2xl border-2 border-white/20 backdrop-blur-sm">
+        {/* Main Button - Smaller */}
+        <div className="relative w-14 h-14 bg-gradient-to-br from-pink-600 via-purple-600 to-blue-600 rounded-full flex items-center justify-center shadow-xl border-2 border-white/20 backdrop-blur-sm">
           <AnimatePresence mode="wait">
             <motion.div
               key={isOpen ? 'close' : 'open'}
-              initial={{ scale: 2, rotate: -180 }}
+              initial={{ scale: 1.5, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0, rotate: 180 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
             >
               {isOpen ? (
-                <X size={24} className="text-white sm:size-28"/>
+                <X size={22} className="text-white"/>
               ) : (
-                <MessageSquare size={24} className="text-white sm:size-28"/>
+                <MessageSquare size={22} className="text-white"/>
               )}
             </motion.div>
           </AnimatePresence>
           
-          {/* Notification Badge */}
+          {/* Notification Badge - Smaller */}
           {!isOpen && messages.length === 1 && (
-            <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-red-500 rounded-full flex items-center justify-center">
-              <span className="text-[10px] sm:text-xs font-bold">AI</span>
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center shadow-md">
+              <span className="text-[10px] font-bold">AI</span>
             </div>
           )}
         </div>
         
-        {/* Tooltip */}
+        {/* Tooltip - Adjusted position */}
         {!isOpen && (
-          <div className="absolute right-16 sm:right-20 bottom-1/2 transform translate-y-1/2 bg-gray-900 border border-gray-700 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl hidden sm:block">
+          <div className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 bg-gray-900 border border-gray-700 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl hidden sm:block">
             <div className="flex items-center gap-2">
               <Zap size={12} className="text-yellow-400" />
               ZYRO AI Assistant
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse ml-1"></span>
             </div>
-            <div className="absolute right-[-6px] top-1/2 transform -translate-y-1/2 w-3 h-3 bg-gray-900 border-r border-b border-gray-700 rotate-45"></div>
+            <div className="absolute left-[-6px] bottom-7 transform -translate-y-1/2 w-3 h-3 bg-gray-900 border-l border-b border-gray-700 -rotate-45"></div>
           </div>
         )}
       </motion.button>

@@ -75,7 +75,7 @@ const Contact = () => {
                 <Mail size={24}/>
               </div>
               <h3 className="font-gaming font-black text-white italic uppercase mb-2">Email Ops</h3>
-              <p className="text-gray-400 text-sm">support@zyroesports.com</p>
+              <p className="text-gray-400 text-sm">zyro.esports.7@gmail.com</p>
             </div>
 
             <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:border-blue-500/50 transition-all group">
@@ -83,7 +83,7 @@ const Contact = () => {
                 <MessageSquare size={24}/>
               </div>
               <h3 className="font-gaming font-black text-white italic uppercase mb-2">WhatsApp Hub</h3>
-              <p className="text-gray-400 text-sm">+91 70000 00000</p>
+              <p className="text-gray-400 text-sm">+91 82732 64725</p>
             </div>
 
             <div className="bg-rosePink/5 border border-rosePink/20 p-8 rounded-[3rem] relative overflow-hidden">

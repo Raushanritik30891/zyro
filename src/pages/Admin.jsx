@@ -579,11 +579,59 @@ const Admin = () => {
     }
     fetchAllData();
   };
+  // ==========================================
+// 6. LEADERBOARD FUNCTIONS
+// ==========================================
 
-  // ==========================================
-  // 6. EXPORT & BACKUP FUNCTIONS
-  // ==========================================
-  const exportData = (data, filename) => {
+// Revert match function
+const handleRevertMatch = async (matchId) => {
+  if (!window.confirm("Are you sure you want to revert this match? This will delete all associated leaderboard entries.")) return;
+  
+  setLoading(true);
+  try {
+    // Delete leaderboard entries for this match
+    const q = query(
+      collection(db, "leaderboard"), 
+      where("matchId", "==", matchId)
+    );
+    const snap = await getDocs(q);
+    const batch = writeBatch(db);
+    snap.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // Delete match history
+    await deleteDoc(doc(db, "match_history", matchId));
+    
+    addNotification('success', `✅ Match ${matchId} reverted successfully`);
+    fetchHistory();
+    syncLeaderboard();
+  } catch (error) {
+    console.error("Revert error:", error);
+    addNotification('error', "❌ Failed to revert match");
+  }
+  setLoading(false);
+};
+
+// Delete team function
+const handleDeleteTeam = async (teamId) => {
+  if (!window.confirm("Delete this team from leaderboard?")) return;
+  
+  try {
+    await deleteDoc(doc(db, "leaderboard", teamId));
+    addNotification('success', "✅ Team deleted");
+    syncLeaderboard();
+  } catch (error) {
+    addNotification('error', "❌ Failed to delete team");
+  }
+};
+
+// ==========================================
+// 7. EXPORT & BACKUP FUNCTIONS
+// ==========================================
+const exportData = (data, filename) => {
+  try {
     const jsonString = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -595,7 +643,11 @@ const Admin = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     addNotification('success', `📥 ${filename} exported successfully`);
-  };
+  } catch (error) {
+    addNotification('error', "❌ Export failed");
+  }
+};
+
 
   // ==========================================
   // 7. RENDERING SYSTEM
@@ -1842,11 +1894,11 @@ const Admin = () => {
                                 <Edit3 size={18}/>
                               </button>
                               <button 
-                                onClick={() => handleDeleteTeam(team.id)}
-                                className="p-3 bg-red-500/10 hover:bg-red-500 rounded-xl text-red-400 hover:text-white transition-all"
-                              >
-                                <Trash2 size={18}/>
-                              </button>
+  onClick={() => handleDeleteTeam(team.id)} // Yeh line update karein
+  className="p-3 bg-red-500/10 hover:bg-red-500 rounded-xl text-red-400 hover:text-white transition-all"
+>
+  <Trash2 size={18}/>
+</button>
                             </div>
                           </div>
                         </motion.div>
@@ -1945,11 +1997,11 @@ const Admin = () => {
                           
                           <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button 
-                              onClick={() => handleRevertMatch(log.matchId)}
-                              className="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-xl text-sm font-medium flex items-center gap-2 transition-all"
-                            >
-                              <ZapOff size={14}/> Revert
-                            </button>
+                              onClick={() => handleRevertMatch(log.matchId)} // Yeh line update karein
+                                className="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-xl text-sm font-medium flex items-center gap-2 transition-all"
+>
+                                <ZapOff size={14}/> Revert
+                                </button>
                             <button 
                               onClick={() => deleteDoc(doc(db, "match_history", log.id)).then(fetchHistory)}
                               className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm font-medium flex items-center gap-2 transition-all"

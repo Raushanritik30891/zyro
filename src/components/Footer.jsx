@@ -24,10 +24,22 @@ const Footer = () => {
             </p>
             {/* Social Icons */}
             <div className="flex gap-3">
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"><Instagram size={16} className="text-gray-400 hover:text-white"/></a>
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"><Youtube size={16} className="text-gray-400 hover:text-red-500"/></a>
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"><Globe size={16} className="text-gray-400 hover:text-blue-400"/></a>
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"><MessageCircle size={16} className="text-gray-400 hover:text-yellow-400"/></a>
+              <a 
+                href="https://www.instagram.com/zyro_sports.7?igsh=MWE4b2l1NGhwa3RiMA==" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"
+              >
+                <Instagram size={16} className="text-gray-400 hover:text-pink-500"/>
+              </a>
+              <a 
+                href="https://whatsapp.com/channel/0029Vb78Cm842DcmsSYTRE33" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-all"
+              >
+                <WhatsAppIcon size={16} className="text-gray-400 hover:text-green-500"/>
+              </a>
             </div>
           </div>
 
@@ -65,9 +77,8 @@ const Footer = () => {
               <li><Link to="/privacy" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight size={12}/> Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight size={12}/> Terms of Service</Link></li>
               <li><Link to="/help" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight size={12}/> Help Center</Link></li>
-              <li><Link to="/support" className="hover:text-white transition-colors flex items-center gap-2"><ChevronRight size={12}/> Support</Link></li>
             </ul>
-        </div>
+          </div>
 
           {/* COLUMN 3: CONTACT EMAIL */}
           <div className="col-span-2 md:col-span-1">
@@ -75,7 +86,7 @@ const Footer = () => {
             <div className="bg-white/5 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-all">
                 <Mail className="text-yellow-400 mb-2" size={20}/>
                 <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">Email Us</p>
-                <a href="mailto:9t9tournaments@gmail.com" className="text-white font-bold text-xs hover:text-yellow-400 transition-colors">9t9tournaments@gmail.com</a>
+                <a href="mailto:zyro.esports.7@gmail.com" className="text-white font-bold text-xs hover:text-yellow-400 transition-colors">zyro.esports.7@gmail.com</a>
             </div>
           </div>
 
@@ -85,7 +96,7 @@ const Footer = () => {
             <div className="bg-white/5 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-all">
                 <Clock className="text-yellow-400 mb-2" size={20}/>
                 <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">Support Hours</p>
-                <p className="text-white font-bold text-xs">8:00 AM - 11:00 PM</p>
+                <p className="text-white font-bold text-xs">8:00 AM - 12:00 PM</p>
             </div>
           </div>
 
@@ -94,7 +105,24 @@ const Footer = () => {
         {/* --- BOTTOM SECTION --- */}
         <div className="border-t border-white/10 pt-6 text-center">
           <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-            © 2024 ZYRO ESPORTS. DESIGNED BY RITIK RAUSHAN.
+            © 2026 ZYRO ESPORTS. DESIGNED BY RITIK RAUSHAN. CONNECT WITH US ON{' '}
+            <a 
+              href="https://wa.me/9142702533" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-yellow-400 hover:text-yellow-300 ml-1"
+            >
+              WHATSAPP
+            </a>
+            {' '}OR{' '}
+            <a 
+              href="https://www.instagram.com/_cool__dude___69?igsh=bnI4OXhsdWlsdnds" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-yellow-400 hover:text-yellow-300 ml-1"
+            >
+              INSTAGRAM
+            </a>.
           </p>
         </div>
 
@@ -113,6 +141,13 @@ const ZapIcon = () => (
 const ChevronRight = ({size}) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 18l6-6-6-6"/>
+    </svg>
+);
+
+const WhatsAppIcon = ({size}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="currentColor"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.663 4.1 1.789 5.731L.044 23.677c-.118.365.022.76.337.998.315.238.735.257 1.07.054l5.433-3.363A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" fill="currentColor"/>
     </svg>
 );
 

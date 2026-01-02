@@ -66,7 +66,7 @@ const App = () => {
         <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
         <Route path="/terms" element={<Layout><Terms /></Layout>} />
         <Route path="/help" element={<Layout><Help /></Layout>} />
-
+     
         
         {/* PROTECTED ROUTES */}
         <Route path="/profile" element={<Layout><Profile /></Layout>} />

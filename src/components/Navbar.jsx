@@ -12,7 +12,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import logoImg from '../assets/logo.png'; 
 
 // 👑 ADMIN LIST
-const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "hrithiraushan@gmail.com", "admin@zyro.com"];
+const ADMIN_EMAILS = ["raushanritik30891@gmail.com", "hrithiraushan@gmail.com", "zyro.esports.7@gmail.com"];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

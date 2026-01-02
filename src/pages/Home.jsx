@@ -282,12 +282,12 @@ const Home = () => {
               <div className="text-center sm:text-left">
                 <h2 className="text-lg md:text-xl font-bold uppercase">Official WhatsApp Hub</h2>
                 <p className="text-green-400 text-xs font-bold uppercase flex items-center gap-2 justify-center sm:justify-start mt-1">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live ID/Pass & Schedules
+          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> DAily TOURNAMENTS AND UPDATES
                 </p>
               </div>
             </div>
             <a 
-              href="https://chat.whatsapp.com/YOUR_LINK" 
+              href="https://whatsapp.com/channel/0029Vb78Cm842DcmsSYTRE33" 
               target="_blank" 
               rel="noreferrer" 
               className="w-full sm:w-auto"
@@ -311,7 +311,7 @@ const Home = () => {
               <span className="text-xs font-bold text-yellow-500 uppercase tracking-wider">Power Up Your Game</span>
             </motion.div>
             <h2 className="text-2xl md:text-5xl font-bold uppercase mb-2 md:mb-4">
-              Elite <span className="text-pink-500">Passes</span>
+              Premium <span className="text-pink-500">Passes</span>
             </h2>
             <p className="text-gray-500 text-sm">Swipe to select your warrior tier</p>
           </div>
@@ -322,8 +322,8 @@ const Home = () => {
             {/* CARD 1: Scout */}
             <div className="min-w-[85vw] md:min-w-0 snap-center bg-gray-900/50 p-6 md:p-8 rounded-2xl md:rounded-3xl border border-gray-800 flex flex-col">
               <Shield size={32} md:size={40} className="text-gray-500 mb-4 md:mb-6"/>
-              <h3 className="text-xl md:text-2xl font-bold text-gray-300">WARRIOR PASS</h3>
-              <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4 md:mb-6">₹49 <span className="text-sm text-gray-500">/match</span></div>
+              <h3 className="text-xl md:text-2xl font-bold text-gray-300">GOLD PASS</h3>
+              <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4 md:mb-6">₹49 <span className="text-sm text-gray-500">/WEEk</span></div>
               <ul className="text-sm text-gray-400 space-y-3 mb-6 md:mb-8 flex-1">
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-green-500" /> Standard Support</li>
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-green-500" /> Manual Booking</li>
@@ -359,7 +359,7 @@ const Home = () => {
             {/* CARD 3: Warrior */}
             <div className="min-w-[85vw] md:min-w-0 snap-center bg-gray-900/50 p-6 md:p-8 rounded-2xl md:rounded-3xl border border-gray-800 flex flex-col">
               <Flame size={32} md:size={40} className="text-pink-500 mb-4 md:mb-6"/>
-              <h3 className="text-xl md:text-2xl font-bold text-white">WARRIOR</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-white">DIAMOND</h3>
               <div className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4 md:mb-6">₹99 <span className="text-sm text-gray-500">/week</span></div>
               <ul className="text-sm text-gray-400 space-y-3 mb-6 md:mb-8 flex-1">
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-pink-500" /> Priority Slot Booking</li>

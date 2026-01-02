@@ -19,7 +19,7 @@ const Help = () => {
                 title="WhatsApp Support"
                 desc="Instant replies for urgent queries."
                 action="Chat Now"
-                link="https://wa.me/919876543210"
+                link="https://wa.me/918273264725"
             />
             <ContactCard 
                 icon={<Mail size={32} className="text-blue-500"/>}

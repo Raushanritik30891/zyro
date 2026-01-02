@@ -5,14 +5,14 @@ import {
   Gamepad2, Calendar, MessageCircle, AlertCircle,
   Zap, Target, Crown, DollarSign, BookOpen, Star,
   Shield, Users as TeamIcon, Hash, Phone, Send, Eye,
-  Search // ✅ This should be imported correctly
+  Search, MessageSquare, TrendingUp, Award
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { db } from '../firebase';
 import { collection, getDocs, query, orderBy, where, onSnapshot } from 'firebase/firestore';
 
 // ⚠️ Apna WhatsApp Number yahan dalein (Country code ke saath)
-const WHATSAPP_NUMBER = "919876543210"; 
+const WHATSAPP_NUMBER = "918273264725"; // Replace with your number
 
 const Matches = () => {
   const [matches, setMatches] = useState([]);
@@ -99,11 +99,9 @@ const Matches = () => {
 💰 *Entry Fee:* ₹${match.entryFee}
 🏅 *Prize Pool:* ₹${match.prizePool}
     
-🌟 *SUPER SAIYAN SLOT REQUEST!* 🌟
-Kamehameha! I want to join this tournament! 
+🌟 *SLOT BOOKING REQUEST* 🌟
+I want to join this tournament! 
 Please book my slot and send payment details.
-    
-⚡ *Goku Style:* Let's go! I'm ready to fight!
     
 ⌚ Request Time: ${currentTime}
     
@@ -115,13 +113,6 @@ Please book my slot and send payment details.
   // View Details
   const handleViewDetails = (match) => {
     setActiveMatch(match);
-  };
-
-  // Debug function to check data
-  const debugMatches = () => {
-    console.log("All matches:", matches);
-    console.log("Filtered matches:", filteredMatches);
-    console.log("Match statuses:", matches.map(m => ({ title: m.title, status: m.status })));
   };
 
   return (
@@ -137,440 +128,324 @@ Please book my slot and send payment details.
 
       <div className="pt-28 px-4 max-w-[1800px] mx-auto relative z-10">
         
-        {/* HEADER */}
+        {/* SIMPLE HEADER */}
         <motion.div 
-          initial={{ y: -50, opacity: 0 }}
+          initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="text-center mb-12 relative"
+          className="text-center mb-10"
         >
-          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2">
-            <div className="relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-orange-500 to-red-600 rounded-full animate-pulse"></div>
-              <div className="absolute inset-4 bg-yellow-400 rounded-full"></div>
-              <Star className="absolute inset-0 m-auto text-black" size={40}/>
-            </div>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3">
             <span className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
-              TOURNAMENT ARENA
+              Tournaments
             </span>
           </h1>
-          <p className="text-lg text-gray-400 font-bold uppercase tracking-[0.5em]">
-            CHOOSE YOUR BATTLE • PROVE YOUR POWER
-          </p>
+          <p className="text-gray-400">Join exciting Free Fire tournaments and win prizes</p>
         </motion.div>
 
-        {/* 🔍 SEARCH AND FILTER BAR */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
-          <div className="flex-1 max-w-xl">
+        {/* 🔍 SEARCH AND FILTER */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex-1">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search tournaments..."
-                className="w-full bg-black/60 border border-gray-800 p-4 pl-12 rounded-2xl text-white placeholder-gray-500 outline-none focus:border-orange-500 transition-all"
+                className="w-full bg-black/60 border border-gray-800 p-3 pl-10 rounded-xl text-white placeholder-gray-500 outline-none focus:border-orange-500 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {/* Using Search icon directly - if still error, use SearchCircle or SearchIcon */}
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={20}/>
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18}/>
             </div>
           </div>
 
-          {/* FILTER BUTTONS */}
-          <div className="flex bg-black/60 p-1.5 rounded-2xl border border-gray-800">
-            {[
-              { id: 'ALL', label: '🔥 ALL', icon: <Swords size={16}/> },
-              { id: 'BR', label: '⚔️ BR', icon: <Target size={16}/> },
-              { id: 'CS', label: '🛡️ CS', icon: <Shield size={16}/> }
-            ].map((tab) => (
+          <div className="flex bg-black/60 p-1 rounded-xl border border-gray-800">
+            {['ALL', 'BR', 'CS'].map((tab) => (
               <button
-                key={tab.id}
-                onClick={() => setFilter(tab.id)}
-                className={`px-6 py-3 rounded-xl font-black text-sm uppercase transition-all flex items-center gap-2 ${filter === tab.id ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg shadow-orange-500/30' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                key={tab}
+                onClick={() => setFilter(tab)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${filter === tab ? 'bg-orange-600 text-white' : 'text-gray-400 hover:text-white'}`}
               >
-                {tab.icon} {tab.label}
+                {tab}
               </button>
             ))}
           </div>
-
-          {/* DEBUG BUTTON - Remove in production */}
-          <button 
-            onClick={debugMatches}
-            className="px-4 py-2 bg-gray-800/50 text-xs text-gray-400 rounded-lg hover:bg-gray-700"
-            title="Debug matches"
-          >
-            Debug
-          </button>
         </div>
 
-        {/* 📊 STATS BAR */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          <div className="bg-black/40 p-4 rounded-2xl border border-gray-800">
-            <div className="text-3xl font-black text-yellow-400">{sortedMatches.length}</div>
-            <div className="text-xs text-gray-400 uppercase tracking-widest">Active Battles</div>
+        {/* STATS SUMMARY */}
+        <div className="grid grid-cols-4 gap-3 mb-8">
+          <div className="bg-black/40 p-3 rounded-xl border border-gray-800 text-center">
+            <div className="text-xl font-bold text-white">{sortedMatches.length}</div>
+            <div className="text-xs text-gray-400">Total</div>
           </div>
-          <div className="bg-black/40 p-4 rounded-2xl border border-gray-800">
-            <div className="text-3xl font-black text-green-400">
+          <div className="bg-black/40 p-3 rounded-xl border border-gray-800 text-center">
+            <div className="text-xl font-bold text-green-400">
               {sortedMatches.filter(m => m.status === 'OPEN').length}
             </div>
-            <div className="text-xs text-gray-400 uppercase tracking-widest">Open Now</div>
+            <div className="text-xs text-gray-400">Open</div>
           </div>
-          <div className="bg-black/40 p-4 rounded-2xl border border-gray-800">
-            <div className="text-3xl font-black text-blue-400">
+          <div className="bg-black/40 p-3 rounded-xl border border-gray-800 text-center">
+            <div className="text-xl font-bold text-yellow-400">
               {sortedMatches.filter(m => m.featured).length}
             </div>
-            <div className="text-xs text-gray-400 uppercase tracking-widest">Featured</div>
+            <div className="text-xs text-gray-400">Featured</div>
           </div>
-          <div className="bg-black/40 p-4 rounded-2xl border border-gray-800">
-            <div className="text-3xl font-black text-purple-400">
+          <div className="bg-black/40 p-3 rounded-xl border border-gray-800 text-center">
+            <div className="text-xl font-bold text-blue-400">
               {sortedMatches.filter(m => m.category === 'BR').length}
             </div>
-            <div className="text-xs text-gray-400 uppercase tracking-widest">BR Matches</div>
+            <div className="text-xs text-gray-400">BR</div>
           </div>
         </div>
 
-        {/* ⚔️ TOURNAMENT CARDS GRID */}
+        {/* TOURNAMENT CARDS */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32">
-            <div className="relative mb-8">
-              <div className="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Zap className="text-yellow-400 animate-pulse" size={32}/>
-              </div>
-            </div>
-            <p className="text-xl font-bold text-gray-400">Loading Tournaments...</p>
-            <p className="text-sm text-gray-600 mt-2">Fetching latest battles</p>
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-12 h-12 border-3 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-400">Loading tournaments...</p>
           </div>
         ) : sortedMatches.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="col-span-full text-center py-32"
-          >
-            <div className="relative mb-8">
-              <AlertCircle className="mx-auto text-gray-700" size={80}/>
-              <div className="absolute -inset-8 bg-gray-900/50 blur-3xl rounded-full"></div>
-            </div>
-            <h3 className="text-3xl font-bold text-gray-600 mb-4">No Active Tournaments Found</h3>
-            <p className="text-gray-500 max-w-md mx-auto mb-8">
-              {searchQuery ? `No tournaments found for "${searchQuery}"` : 
-               `No ${filter === 'ALL' ? '' : filter + ' '}tournaments are currently active. Check back soon!`}
+          <div className="text-center py-20 bg-black/30 rounded-2xl border border-gray-800">
+            <AlertCircle className="mx-auto mb-4 text-gray-600" size={48}/>
+            <h3 className="text-xl font-bold text-gray-500 mb-2">No tournaments found</h3>
+            <p className="text-gray-600">
+              {searchQuery ? `No results for "${searchQuery}"` : 'Check back soon for new tournaments'}
             </p>
-            
-            {/* DEBUG INFO */}
-            {matches.length > 0 && (
-              <div className="mt-8 p-6 bg-black/40 rounded-2xl border border-gray-800 max-w-2xl mx-auto">
-                <h4 className="text-lg font-bold mb-4">Debug Information:</h4>
-                <div className="text-left space-y-2">
-                  <p className="text-sm">Total matches in database: <span className="text-yellow-400">{matches.length}</span></p>
-                  <p className="text-sm">Match statuses:</p>
-                  <ul className="text-sm text-gray-400 space-y-1 ml-4">
-                    {matches.map((m, i) => (
-                      <li key={i}>• {m.title} - <span className={m.status === 'OPEN' ? 'text-green-400' : 'text-yellow-400'}>{m.status}</span></li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-          </motion.div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <AnimatePresence>
-              {sortedMatches.map((match, index) => (
-                <motion.div
-                  key={match.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.03, y: -10 }}
-                  className="bg-gradient-to-br from-gray-900/90 to-black/90 border border-gray-800 rounded-3xl overflow-hidden group hover:border-orange-500/50 transition-all duration-300 shadow-2xl hover:shadow-orange-500/20 relative"
-                >
-                  {/* FEATURED BADGE */}
-                  {match.featured && (
-                    <div className="absolute -top-3 -right-3 z-20">
-                      <div className="relative">
-                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center animate-pulse">
-                          <Crown className="text-black" size={24}/>
-                        </div>
-                        <div className="absolute -ins-2 bg-yellow-500/20 blur-md rounded-full"></div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* STATUS BADGE */}
-                  <div className="absolute top-6 left-6 z-10">
-                    <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest ${match.status === 'OPEN' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'}`}>
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full animate-pulse ${match.status === 'OPEN' ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedMatches.map((match, index) => (
+              <motion.div
+                key={match.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-gradient-to-b from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden hover:border-orange-500/50 transition-all group"
+              >
+                {/* CARD HEADER */}
+                <div className="p-5 border-b border-gray-800">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className={`text-xs px-2 py-1 rounded ${match.category === 'BR' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                        {match.category}
+                      </span>
+                      <span className={`ml-2 text-xs px-2 py-1 rounded ${match.status === 'OPEN' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
                         {match.status}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* CARD HEADER */}
-                  <div className="p-6 border-b border-gray-800">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className={`p-2 rounded-xl ${match.category === 'BR' ? 'bg-red-500/20' : 'bg-blue-500/20'}`}>
-                        {match.category === 'BR' ? <Target className="text-red-400" size={20}/> : <Shield className="text-blue-400" size={20}/>}
-                      </div>
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                        {match.category} • {match.type}
                       </span>
                     </div>
-                    
-                    <h3 className="text-2xl font-bold mb-2 group-hover:text-orange-400 transition-all line-clamp-2">
-                      {match.title}
-                    </h3>
-                    
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <span className="flex items-center gap-1">
-                        <Map size={14}/> {match.map}
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Hash size={14}/> {match.matchCount}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* CARD BODY */}
-                  <div className="p-6">
-                    {/* SCHEDULE */}
-                    <div className="mb-6 p-4 bg-black/40 rounded-2xl border border-gray-800">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Calendar className="text-orange-400" size={20}/>
-                        <span className="font-bold">Schedule</span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">Date</span>
-                          <span className="font-medium">{new Date(match.time).toLocaleDateString('en-IN')}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">Time</span>
-                          <span className="font-medium text-yellow-400">
-                            {new Date(match.time).toLocaleTimeString('en-IN', { 
-                              hour: '2-digit', 
-                              minute: '2-digit',
-                              hour12: true 
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* PRIZE & SLOTS */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="p-4 bg-black/40 rounded-2xl border border-gray-800">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Trophy className="text-yellow-500" size={18}/>
-                          <span className="text-sm font-bold">Prize Pool</span>
-                        </div>
-                        <div className="text-2xl font-black text-green-400">₹{match.prizePool}</div>
-                        <div className="text-xs text-gray-500 mt-1">Entry: ₹{match.entryFee}</div>
-                      </div>
-                      
-                      <div className="p-4 bg-black/40 rounded-2xl border border-gray-800">
-                        <div className="flex items-center gap-2 mb-2">
-                          <TeamIcon className="text-blue-500" size={18}/>
-                          <span className="text-sm font-bold">Slots</span>
-                        </div>
-                        <div className="text-2xl font-black text-white">
-                          {match.filledSlots || 0}/{match.totalSlots}
-                        </div>
-                        <div className="w-full h-1.5 bg-gray-800 rounded-full mt-2 overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
-                            style={{ width: `${((match.filledSlots || 0) / match.totalSlots) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* PER KILL BONUS */}
-                    {match.perKill > 0 && (
-                      <div className="mb-6 p-4 bg-gradient-to-r from-red-900/20 to-orange-900/20 border border-red-500/30 rounded-2xl">
-                        <div className="flex items-center gap-3">
-                          <Zap className="text-yellow-500 animate-pulse" size={20}/>
-                          <div>
-                            <p className="font-bold">Per Kill Bonus</p>
-                            <p className="text-2xl font-black text-yellow-400">₹{match.perKill}</p>
-                          </div>
-                        </div>
-                      </div>
+                    {match.featured && (
+                      <Star className="text-yellow-500" size={16}/>
                     )}
                   </div>
+                  
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-orange-400 transition-all">
+                    {match.title}
+                  </h3>
+                  
+                  <div className="flex items-center gap-3 text-sm text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <Map size={14}/> {match.map}
+                    </span>
+                    <span>•</span>
+                    <span>{match.type}</span>
+                  </div>
+                </div>
 
-                  {/* ACTION BUTTONS */}
-                  <div className="p-6 border-t border-gray-800 space-y-3">
-                    {/* PRIMARY BOOKING BUTTON */}
-                    <button 
-                      onClick={() => handleBookSlot(match)}
-                      className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold text-lg rounded-2xl hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 group/btn"
-                    >
-                      <MessageCircle className="group-hover/btn:animate-bounce" size={20}/>
-                      <span>📞 BOOK SLOT VIA WHATSAPP</span>
-                    </button>
-                    
-                    {/* SECONDARY ACTIONS */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <button 
-                        onClick={() => handleBookSlot(match)}
-                        className="py-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-bold hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
-                      >
-                        <DollarSign size={16}/> PAYMENT
-                      </button>
-                      <button 
-                        onClick={() => handleViewDetails(match)}
-                        className="py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
-                      >
-                        <Eye size={16}/> DETAILS
-                      </button>
+                {/* CARD BODY */}
+                <div className="p-5">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-sm text-gray-400">Date</div>
+                      <div className="font-medium">
+                        {new Date(match.time).toLocaleDateString('en-IN', { 
+                          day: 'numeric',
+                          month: 'short'
+                        })}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm text-gray-400">Time</div>
+                      <div className="font-medium text-yellow-400">
+                        {new Date(match.time).toLocaleTimeString('en-IN', { 
+                          hour: '2-digit', 
+                          minute: '2-digit',
+                          hour12: true 
+                        })}
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="bg-black/40 p-3 rounded-lg text-center">
+                      <div className="text-sm text-gray-400">Prize</div>
+                      <div className="text-lg font-bold text-green-400">₹{match.prizePool}</div>
+                    </div>
+                    <div className="bg-black/40 p-3 rounded-lg text-center">
+                      <div className="text-sm text-gray-400">Entry</div>
+                      <div className="text-lg font-bold">₹{match.entryFee}</div>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-400">Slots</span>
+                      <span>{match.filledSlots || 0}/{match.totalSlots}</span>
+                    </div>
+                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
+                        style={{ width: `${((match.filledSlots || 0) / match.totalSlots) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {match.perKill > 0 && (
+                    <div className="bg-gradient-to-r from-red-900/20 to-orange-900/20 p-3 rounded-lg text-center mb-4">
+                      <div className="text-sm text-gray-400">Per Kill</div>
+                      <div className="text-lg font-bold text-yellow-400">₹{match.perKill}</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* ACTION BUTTONS */}
+                <div className="p-5 border-t border-gray-800 space-y-3">
+                  <button 
+                    onClick={() => handleBookSlot(match)}
+                    className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare size={18}/>
+                    Book Now
+                  </button>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => handleViewDetails(match)}
+                      className="py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition-all flex items-center justify-center gap-2"
+                    >
+                      <Eye size={16}/>
+                      Details
+                    </button>
+                    <button 
+                      onClick={() => handleBookSlot(match)}
+                      className="py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition-all flex items-center justify-center gap-2"
+                    >
+                      <DollarSign size={16}/>
+                      Payment
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         )}
 
-        {/* 📱 WHATSAPP FLOATING BUTTON */}
+        {/* WHATSAPP FLOATING BUTTON - Position Adjusted */}
         <motion.button 
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1 }}
-          whileHover={{ scale: 1.1, rotate: 5 }}
+          transition={{ delay: 0.5 }}
+          whileHover={{ scale: 1.1 }}
           onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')}
-          className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all"
+          className="fixed bottom-20 right-6 z-50 w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-green-500/30 transition-all"
         >
-          <Phone className="text-white" size={28}/>
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-ping"></div>
+          <MessageSquare className="text-white" size={24}/>
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
         </motion.button>
 
-        {/* 💬 HELP MESSAGE */}
-        <div className="mt-16 text-center">
-          <div className="inline-block p-6 bg-gradient-to-r from-orange-900/20 to-red-900/20 border border-orange-500/30 rounded-3xl max-w-2xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl">
-                <Send className="text-white" size={24}/>
-              </div>
+        {/* HELP MESSAGE */}
+        <div className="mt-12 text-center">
+          <div className="inline-block p-5 bg-black/40 border border-gray-800 rounded-xl max-w-md">
+            <div className="flex items-center gap-3 mb-3">
+              <MessageCircle className="text-green-500" size={20}/>
               <div className="text-left">
-                <h4 className="text-xl font-bold">Need Instant Help?</h4>
-                <p className="text-gray-400">Click WhatsApp button for instant tournament booking and payment support</p>
+                <h4 className="font-bold">Need Help?</h4>
+                <p className="text-sm text-gray-400">Click WhatsApp button for instant support</p>
               </div>
             </div>
             <button 
               onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')}
-              className="w-full py-3 bg-gradient-to-r from-green-600 to-green-500 text-white font-bold rounded-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
+              className="w-full py-2 bg-green-600 hover:bg-green-700 text-sm rounded-lg transition-all flex items-center justify-center gap-2"
             >
-              <MessageCircle size={20}/> Chat with Tournament Manager
+              <MessageSquare size={16}/>
+              Chat with Manager
             </button>
           </div>
         </div>
       </div>
 
-      {/* 🏆 MATCH DETAILS MODAL */}
+      {/* MATCH DETAILS MODAL */}
       <AnimatePresence>
         {activeMatch && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 backdrop-blur-xl px-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 px-4">
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-gradient-to-br from-gray-900 to-black border border-orange-500/30 p-8 rounded-3xl max-w-2xl w-full shadow-2xl shadow-orange-500/10"
+              className="bg-gradient-to-b from-gray-900 to-black border border-gray-800 p-6 rounded-2xl max-w-md w-full"
             >
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                  TOURNAMENT DETAILS
-                </h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold">Tournament Details</h3>
                 <button 
                   onClick={() => setActiveMatch(null)} 
-                  className="p-2 hover:bg-gray-800 rounded-full transition-all"
+                  className="p-1 hover:bg-gray-800 rounded"
                 >
-                  <ChevronRight size={24}/>
+                  ✕
                 </button>
               </div>
               
-              <div className="space-y-6">
-                {/* Match Info */}
-                <div className="p-6 bg-black/40 rounded-2xl border border-gray-800">
-                  <h4 className="text-xl font-bold mb-4">{activeMatch.title}</h4>
-                  <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-bold text-lg mb-2">{activeMatch.title}</h4>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <p className="text-sm text-gray-400">Category</p>
-                      <p className="font-bold">{activeMatch.category}</p>
+                      <div className="text-gray-400">Type</div>
+                      <div>{activeMatch.category} • {activeMatch.type}</div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Type</p>
-                      <p className="font-bold">{activeMatch.type}</p>
+                      <div className="text-gray-400">Map</div>
+                      <div>{activeMatch.map}</div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Map</p>
-                      <p className="font-bold">{activeMatch.map}</p>
+                      <div className="text-gray-400">Match Count</div>
+                      <div>{activeMatch.matchCount}</div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Match Count</p>
-                      <p className="font-bold">{activeMatch.matchCount}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Status</p>
-                      <p className={`font-bold ${activeMatch.status === 'OPEN' ? 'text-green-400' : 'text-yellow-400'}`}>
+                      <div className="text-gray-400">Status</div>
+                      <div className={activeMatch.status === 'OPEN' ? 'text-green-400' : 'text-yellow-400'}>
                         {activeMatch.status}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Created</p>
-                      <p className="font-bold">
-                        {activeMatch.timestamp?.toDate ? 
-                          new Date(activeMatch.timestamp.toDate()).toLocaleDateString() : 
-                          'N/A'}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Prize Distribution */}
-                {(activeMatch.rank1 > 0 || activeMatch.rank2 > 0 || activeMatch.rank3 > 0) && (
-                  <div className="p-6 bg-black/40 rounded-2xl border border-gray-800">
-                    <h4 className="text-xl font-bold mb-4 flex items-center gap-3">
-                      <Trophy className="text-yellow-500"/> Prize Distribution
-                    </h4>
-                    <div className="space-y-3">
-                      {activeMatch.rank1 > 0 && (
-                        <div className="flex justify-between items-center p-3 bg-yellow-500/10 rounded-xl">
-                          <span className="font-bold">🥇 Rank 1</span>
-                          <span className="text-2xl font-black text-yellow-400">₹{activeMatch.rank1}</span>
-                        </div>
-                      )}
-                      {activeMatch.rank2 > 0 && (
-                        <div className="flex justify-between items-center p-3 bg-gray-800/50 rounded-xl">
-                          <span className="font-bold">🥈 Rank 2</span>
-                          <span className="text-xl font-bold text-gray-300">₹{activeMatch.rank2}</span>
-                        </div>
-                      )}
-                      {activeMatch.rank3 > 0 && (
-                        <div className="flex justify-between items-center p-3 bg-orange-500/10 rounded-xl">
-                          <span className="font-bold">🥉 Rank 3</span>
-                          <span className="text-xl font-bold text-orange-400">₹{activeMatch.rank3}</span>
-                        </div>
-                      )}
-                    </div>
+                <div className="pt-4 border-t border-gray-800">
+                  <h4 className="font-bold mb-3">Prize Distribution</h4>
+                  <div className="space-y-2">
+                    {activeMatch.rank1 > 0 && (
+                      <div className="flex justify-between items-center p-2 bg-yellow-500/10 rounded">
+                        <span>🥇 1st Prize</span>
+                        <span className="font-bold">₹{activeMatch.rank1}</span>
+                      </div>
+                    )}
+                    {activeMatch.rank2 > 0 && (
+                      <div className="flex justify-between items-center p-2 bg-gray-800/50 rounded">
+                        <span>🥈 2nd Prize</span>
+                        <span>₹{activeMatch.rank2}</span>
+                      </div>
+                    )}
+                    {activeMatch.rank3 > 0 && (
+                      <div className="flex justify-between items-center p-2 bg-orange-500/10 rounded">
+                        <span>🥉 3rd Prize</span>
+                        <span>₹{activeMatch.rank3}</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-6 border-t border-gray-800">
+                <div className="pt-4 border-t border-gray-800">
                   <button 
                     onClick={() => handleBookSlot(activeMatch)}
-                    className="flex-1 py-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl font-bold text-lg hover:scale-[1.02] transition-all"
+                    className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg font-bold hover:scale-[1.02] transition-all"
                   >
-                    Book Slot Now
-                  </button>
-                  <button 
-                    onClick={() => setActiveMatch(null)}
-                    className="px-8 py-4 bg-gray-800 hover:bg-gray-700 rounded-2xl font-bold transition-all"
-                  >
-                    Close
+                    Book Slot on WhatsApp
                   </button>
                 </div>
               </div>
