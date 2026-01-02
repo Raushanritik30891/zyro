@@ -13,7 +13,7 @@ const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dwhttjvop/image/upload";
 const UPLOAD_PRESET = "zyro esports"; 
 
 // QR Code image URL - ADD YOUR QR CODE IMAGE URL HERE
-const QR_CODE_URL = "/qr.png"; // public folder के root में रखें qr.png
+const QR_CODE_URL = "/pages/qr.png"; // public folder के root में रखें qr.png
 
 const Subscription = () => {
   const { addNotification } = useNotification();
@@ -383,7 +383,7 @@ const Subscription = () => {
                                       alt="Scan QR Code to Pay" 
                                       className="w-48 h-48 object-contain"
                                       onError={(e) => {
-                                        e.target.src = "https://via.placeholder.com/200x200?text=QR+Code+Here";
+                                        e.target.src = "/qr.png"; // Fallback image
                                         e.target.alt = "QR Code Placeholder";
                                       }}
                                     />
@@ -394,7 +394,7 @@ const Subscription = () => {
                                 <div className="bg-black/50 p-4 rounded-xl border border-white/10">
                                     <div className="text-center mb-2">
                                       <p className="text-xs text-gray-400">UPI ID</p>
-                                      <p className="text-lg font-mono font-bold">zyroesports@upi</p>
+                                      <p className="text-lg font-mono font-bold">9457078602@axl</p>
                                     </div>
                                     <div className="flex items-center justify-center gap-2 mt-3">
                                       <div className="text-center">
