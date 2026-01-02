@@ -8,7 +8,14 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { db, auth } from '../firebase';
-import { doc, getDoc, updateDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { 
+  doc, 
+  getDoc, 
+  updateDoc, 
+  serverTimestamp, 
+  setDoc,
+  collection // ✅ IMPORTANT: यह add किया गया
+} from 'firebase/firestore';
 import { useNotification } from '../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -299,14 +306,13 @@ const Profile = () => {
       const userSnap = await getDoc(userRef);
       const currentUserData = userSnap.exists() ? userSnap.data() : {};
       
-      // 2. Check for existing pending requests
-      const subscriptionsRef = collection(db, "subscriptions");
-      // Note: We would need to query here, but for simplicity we'll create unique ID
-      
-      // 3. Create subscription request (Goes to admin for approval)
+      // 2. Create subscription request (Goes to admin for approval)
       const orderId = `POINTS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       
-      await setDoc(doc(db, "subscriptions", orderId), {
+      // ✅ IMPORTANT: collection import होने के बाद यह काम करेगा
+      const subscriptionsCollection = collection(db, "subscriptions");
+      
+      await setDoc(doc(subscriptionsCollection, orderId), {
         // User details
         userId: user.uid,
         userEmail: user.email,
