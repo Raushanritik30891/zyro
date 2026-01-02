@@ -9,7 +9,7 @@ import {
   Crown, Award, Users as TeamIcon, TrendingUp, DollarSign, 
   BarChart, Smartphone, Gamepad2, BookOpen, Shield, Volume2,
   BarChart2, PieChart, LineChart, Download, EyeOff, GitMerge,
-  Calendar, Clock3, ExternalLink, Phone, Mail, Home, Lock
+  Calendar, Clock3, ExternalLink, Phone, Mail, Home, Lock,sword
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { db, auth } from '../firebase';
