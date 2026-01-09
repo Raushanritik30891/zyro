@@ -54,7 +54,7 @@ const Subscription = () => {
     { 
       id: "warrior", 
       name: "GOLD PASS", 
-      price: 49, 
+      price: 99, 
       points: 10, // ₹49 → 10 points
       color: "#60a5fa", 
       icon: <ShieldCheck size={32}/>,
@@ -68,7 +68,7 @@ const Subscription = () => {
     { 
       id: "elite", 
       name: "DIAMOND PASS", 
-      price: 99, 
+      price: 199, 
       points: 20, // ₹99 → 20 points
       color: "#f43f5e", 
       icon: <Zap size={32}/>,
@@ -84,7 +84,7 @@ const Subscription = () => {
     { 
       id: "god", 
       name: "GOD PASS", 
-      price: 199, 
+      price: 299, 
       points: 50, // ₹199 → 50 points
       color: "#facc15", 
       featured: true,

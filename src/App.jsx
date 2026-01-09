@@ -2,15 +2,8 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // --- COMPONENTS ---
-// Navbar ab har page ke andar manually call nahi hoga, Layout me fix kar diya
 import Navbar from './components/Navbar'; 
 import Footer from './components/Footer';
-// Import these at the top
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
-import Help from './pages/Help';
-
-// Add these inside <Routes>
 
 // --- PAGES ---
 import Home from './pages/Home';
@@ -21,7 +14,11 @@ import Matches from './pages/Matches';
 import Leaderboard from './pages/Leaderboard';
 import Admin from './pages/Admin';
 import Contact from './pages/Contact';
-import About from './pages/About'; // ✅ New Page
+import About from './pages/About';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Help from './pages/Help';
+import Blog from './pages/Blog'; // ✅ Added Blog import
 
 // --- SCROLL TO TOP UTILITY ---
 const ScrollToTop = () => {
@@ -36,12 +33,10 @@ const ScrollToTop = () => {
 const Layout = ({ children, hideFooter = false }) => {
   return (
     <div className="flex flex-col min-h-screen bg-[#050505]">
-      <Navbar /> {/* ✅ Navbar Global kar diya taaki har page me alag se na lagana pade */}
-      
+      <Navbar />
       <main className="flex-grow">
         {children}
       </main>
-      
       {!hideFooter && <Footer />}
     </div>
   );
@@ -55,8 +50,9 @@ const App = () => {
         
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/login" element={<Login />} /> {/* Login me Layout nahi chahiye */}
-        <Route path="/about" element={<Layout><About /></Layout>} /> {/* ✅ Added */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+<Route path="/blogs" element={<Layout><Blog /></Layout>} />  // /blogs kar do
         
         {/* USER ROUTES */}
         <Route path="/matches" element={<Layout><Matches /></Layout>} />
@@ -66,7 +62,6 @@ const App = () => {
         <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
         <Route path="/terms" element={<Layout><Terms /></Layout>} />
         <Route path="/help" element={<Layout><Help /></Layout>} />
-     
         
         {/* PROTECTED ROUTES */}
         <Route path="/profile" element={<Layout><Profile /></Layout>} />

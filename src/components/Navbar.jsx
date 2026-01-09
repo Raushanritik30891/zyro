@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Menu, X, Crown, LogIn, UserCircle, Headset, Swords, Trophy, 
   LogOut, Home, Info, ShieldCheck, User, Zap, Gamepad2,
-  Sparkles, Award, Settings
+  Sparkles, Award, Settings, Newspaper // ✅ Newspaper added
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db } from '../firebase'; 
@@ -55,12 +55,13 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Menu Config
+  // Menu Config with Blog
   const navItems = [
     { name: 'Home', path: '/', icon: <Home size={18} /> },
     { name: 'Matches', path: '/matches', icon: <Swords size={18} /> },
     { name: 'Leaderboard', path: '/leaderboard', icon: <Trophy size={18} /> },
     { name: 'Passes', path: '/subscription', icon: <Crown size={18} /> },
+    { name: 'Blog', path: '/blogs', icon: <Newspaper size={18} /> }, // ✅ Blog added
   ];
 
   return (
@@ -71,29 +72,28 @@ const Navbar = () => {
           
           {/* --- 1. LOGO BRANDING (Always Visible on ALL Screens) --- */}
           <Link to="/" className="flex items-center gap-3 z-[1000] shrink-0 min-w-[140px]">
-            {/* Logo Container - REMOVED RECTANGLE, JUST LOGO */}
             <div className="relative">
-              {/* Glow Effect - Made larger */}
-               <div className="absolute -inset-3 bg-rosePink/20 blur-lg rounded-full opacity-70"></div>
-              {/* Logo Image - Made larger, no background rectangle */}
-              <div className="relative w-20 h-12 md:w-20 md:h-20">
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 bg-black rounded-full"></div>
                 <img 
                   src={logoImg} 
                   alt="Zyro Logo" 
-                  className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(244,63,94,0.7)]" 
+                  className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(200,63,94,0.7)]"
+                  style={{
+                    clipPath: 'inset(0% 0% 0% 0%)',
+                    WebkitClipPath: 'inset(0% 0% 0% 0%)'
+                  }} 
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextElementSibling.style.display = 'flex';
                   }}
                 />
-                {/* Fallback Text Logo - removed rectangle background */}
                 <div className="hidden items-center justify-center w-full h-full">
                   <span className="font-gaming font-black text-white text-3xl">Z</span>
                 </div>
               </div>
             </div>
             
-            {/* Text Branding - ALWAYS VISIBLE */}
             <div className="flex flex-col justify-center">
               <span className="text-xl md:text-2xl font-gaming font-black italic tracking-wider text-white leading-none bg-gradient-to-r from-rosePink via-white to-purple-500 bg-clip-text text-transparent">
                 ZYRO
@@ -110,7 +110,13 @@ const Navbar = () => {
               <Link 
                 key={item.name} 
                 to={item.path} 
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${location.pathname === item.path ? 'bg-rosePink text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  location.pathname === item.path 
+                    ? item.path === '/blogs' 
+                      ? 'bg-cyan-500 text-white' 
+                      : 'bg-rosePink text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
               >
                 {item.icon} {item.name}
               </Link>
@@ -128,14 +134,12 @@ const Navbar = () => {
             
             {/* GET PASS BUTTON - ALWAYS VISIBLE */}
             <Link to="/subscription" className="relative group">
-              {/* Desktop: Full Button with Glow */}
               <div className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-gaming font-black text-xs uppercase rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] hover:scale-105 transition-all duration-300">
                 <Crown size={14} fill="black" className="group-hover:rotate-12 transition-transform"/> 
                 <span>GET PASS</span>
                 <Sparkles size={12} className="text-yellow-700"/>
               </div>
               
-              {/* Mobile: Icon with Glow */}
               <div className="md:hidden relative">
                 <div className="absolute inset-0 bg-yellow-500 blur rounded-full animate-pulse"></div>
                 <div className="relative p-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-black rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.5)]">
@@ -151,7 +155,6 @@ const Navbar = () => {
                   onClick={() => setShowUserMenu(!showUserMenu)} 
                   className="flex items-center gap-2 pl-1 pr-2 md:pr-3 py-1 bg-gradient-to-r from-purple-900/20 to-rosePink/20 rounded-xl border border-white/10 hover:border-rosePink/50 transition-all group"
                 >
-                  {/* User Avatar */}
                   <div className="relative">
                     <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-rosePink to-purple-600 flex items-center justify-center overflow-hidden border-2 border-white/20 group-hover:border-rosePink/50">
                       {currentUser.photoURL ? (
@@ -164,11 +167,9 @@ const Navbar = () => {
                         <User size={16} className="text-white"/>
                       )}
                     </div>
-                    {/* Online Status */}
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black"></div>
                   </div>
                   
-                  {/* User Name - Hidden on very small screens */}
                   <div className="hidden sm:block text-left min-w-[60px]">
                     <p className="text-xs font-gaming font-bold text-white truncate">
                       {currentUser.displayName?.split(' ')[0] || 'Player'}
@@ -196,7 +197,6 @@ const Navbar = () => {
                       transition={{ type: "spring", stiffness: 300, damping: 25 }}
                       className="absolute top-full right-0 mt-3 w-64 bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl shadow-2xl p-3 z-50 overflow-hidden"
                     >
-                      {/* User Header */}
                       <div className="px-3 py-4 mb-2 border-b border-white/10 bg-gradient-to-r from-rosePink/10 to-purple-600/10 rounded-xl">
                         <p className="text-sm font-gaming font-bold text-white truncate">
                           {currentUser.displayName || 'Zyro Player'}
@@ -217,7 +217,6 @@ const Navbar = () => {
                         </div>
                       </div>
                       
-                      {/* Menu Items */}
                       <div className="space-y-1">
                         <Link 
                           to="/profile" 
@@ -237,7 +236,15 @@ const Navbar = () => {
                           MATCHES
                         </Link>
                         
-                        {/* Admin Access - Only for Admins */}
+                        <Link 
+                          to="/blogs" 
+                          onClick={() => setShowUserMenu(false)}
+                          className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-all text-sm font-medium text-gray-300"
+                        >
+                          <Newspaper size={16} className="text-cyan-400"/> 
+                          BLOG
+                        </Link>
+                        
                         {ADMIN_EMAILS.includes(currentUser.email) && (
                           <Link 
                             to="/admin" 
@@ -249,7 +256,6 @@ const Navbar = () => {
                           </Link>
                         )}
                         
-                        {/* Upgrade Button if not Premium */}
                         {!userData?.isPremium && (
                           <Link 
                             to="/subscription" 
@@ -261,7 +267,6 @@ const Navbar = () => {
                           </Link>
                         )}
                         
-                        {/* Logout Button */}
                         <button 
                           onClick={handleLogout}
                           className="w-full flex items-center gap-3 p-3 hover:bg-red-500/10 text-red-500 rounded-xl transition-all text-sm font-bold mt-1"
@@ -275,7 +280,6 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
             ) : (
-              // LOGIN BUTTON - ALWAYS VISIBLE WHEN NOT LOGGED IN
               <Link 
                 to="/login" 
                 className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-rosePink to-purple-600 text-white rounded-xl font-gaming font-bold text-xs uppercase shadow-[0_0_15px_rgba(244,63,94,0.4)] hover:shadow-[0_0_25px_rgba(244,63,94,0.6)] hover:scale-105 transition-all"
@@ -316,12 +320,11 @@ const Navbar = () => {
             <span className="text-[9px] font-bold mt-1 uppercase">Matches</span>
           </Link>
 
-          {/* 3. CENTER BUTTON (GET PASS / ADMIN) */}
-          <div className="relative -top-5">
-            <Link to="/subscription" className="w-14 h-14 bg-gradient-to-tr from-rosePink to-purple-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.6)] border-4 border-black">
-              <Crown size={24} className="text-white fill-white animate-pulse" />
-            </Link>
-          </div>
+          {/* 3. BLOG (NEW) */}
+          <Link to="/blogs" className={`flex flex-col items-center justify-center w-full h-full ${location.pathname === '/blogs' ? 'text-cyan-500' : 'text-gray-500'}`}>
+            <Newspaper size={20} />
+            <span className="text-[9px] font-bold mt-1 uppercase">Blog</span>
+          </Link>
 
           {/* 4. LEADERBOARD */}
           <Link to="/leaderboard" className={`flex flex-col items-center justify-center w-full h-full ${location.pathname === '/leaderboard' ? 'text-rosePink' : 'text-gray-500'}`}>
@@ -343,7 +346,6 @@ const Navbar = () => {
               <span className="text-[9px] font-bold mt-1 uppercase">Login</span>
             </Link>
           )}
-
         </div>
       </div>
 
@@ -367,11 +369,9 @@ const Navbar = () => {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed inset-0 z-[990] bg-gradient-to-br from-black via-gray-900 to-black pt-32 px-6 lg:hidden flex flex-col gap-3"
           >
-            {/* Background Effects */}
             <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-rosePink/10 to-transparent"></div>
             <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-purple-600/10 to-transparent"></div>
             
-            {/* User Status Bar */}
             {currentUser ? (
               <div className="relative mb-6 p-4 bg-gradient-to-r from-white/5 to-transparent backdrop-blur-sm rounded-2xl border border-white/10">
                 <div className="flex items-center justify-between">
@@ -435,7 +435,7 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Navigation Links */}
+            {/* Navigation Links with Blog */}
             {[...navItems, 
               { name: 'Support', path: '/contact', icon: <Headset size={18} /> },
               { name: 'About Us', path: '/about', icon: <Info size={18} /> }
@@ -449,18 +449,27 @@ const Navbar = () => {
                 <Link 
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-4 p-4 bg-gradient-to-r from-white/5 to-transparent backdrop-blur-sm rounded-2xl border border-white/10 hover:border-rosePink/30 group active:scale-95 transition-all mb-2"
+                  className={`flex items-center gap-4 p-4 backdrop-blur-sm rounded-2xl border group active:scale-95 transition-all mb-2 ${
+                    item.path === '/blogs'
+                      ? 'bg-gradient-to-r from-cyan-500/5 to-transparent border-cyan-500/20 hover:border-cyan-500/40'
+                      : 'bg-gradient-to-r from-white/5 to-transparent border-white/10 hover:border-rosePink/30'
+                  }`}
                 >
-                  <div className="p-2 bg-gradient-to-br from-rosePink/20 to-purple-600/20 rounded-xl group-hover:from-rosePink group-hover:to-purple-600 transition-all">
+                  <div className={`p-2 rounded-xl transition-all ${
+                    item.path === '/blogs'
+                      ? 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 group-hover:from-cyan-500 group-hover:to-blue-600'
+                      : 'bg-gradient-to-br from-rosePink/20 to-purple-600/20 group-hover:from-rosePink group-hover:to-purple-600'
+                  }`}>
                     {item.icon}
                   </div>
                   <span className="text-lg font-gaming font-bold text-white flex-1">{item.name}</span>
-                  <Zap size={20} className="text-gray-500 group-hover:text-rosePink transition-colors" />
+                  <Zap size={20} className={`transition-colors ${
+                    item.path === '/blogs' ? 'text-cyan-400 group-hover:text-cyan-300' : 'text-gray-500 group-hover:text-rosePink'
+                  }`} />
                 </Link>
               </motion.div>
             ))}
 
-            {/* Get Pass Button (Mobile) */}
             {currentUser && !userData?.isPremium && (
               <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -481,7 +490,6 @@ const Navbar = () => {
               </motion.div>
             )}
 
-            {/* Admin Access Button */}
             {currentUser && ADMIN_EMAILS.includes(currentUser.email) && (
               <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -501,7 +509,6 @@ const Navbar = () => {
               </motion.div>
             )}
 
-            {/* Footer */}
             <div className="mt-auto mb-8 text-center">
               <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
               <p className="text-rosePink text-xs font-gaming tracking-widest mb-2">ZYRO ESPORTS</p>
